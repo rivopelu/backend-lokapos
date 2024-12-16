@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.0.0" author="rivopelu (generated)">
+        <createTable tableName="account">
+            <!--            BASE ENTITY START-->
+            <column name="id" type="varchar(255)">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="active" type="int(1)" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(255)" defaultValue="SYSTEM">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="long">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deleted_date" type="long">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_date" type="long">
+                <constraints nullable="true"/>
+            </column>
+            <!--            BASE ENTITY END-->
+            <column name="first_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="password" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="avatar" type="text">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+</databaseChangeLog>
