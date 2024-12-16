@@ -5,7 +5,6 @@ import com.lokapos.controller.AuthController;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.yaml.snakeyaml.representer.BaseRepresenter;
 import utils.ResponseHelper;
 
 @BaseControllerImpl

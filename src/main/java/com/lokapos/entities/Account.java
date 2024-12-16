@@ -1,8 +1,7 @@
 package com.lokapos.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.lokapos.enums.USER_ROLE_ENUM;
+import jakarta.persistence.*;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -29,6 +28,10 @@ public class Account extends BaseEntity {
 
     @Column(name = "avatar")
     private String avatar;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private USER_ROLE_ENUM role;
 
 
 }
