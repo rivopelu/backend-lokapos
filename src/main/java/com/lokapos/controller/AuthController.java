@@ -15,4 +15,8 @@ public interface AuthController {
 
     @PostMapping("sign-up")
     BaseResponse signUp(@RequestBody RequestSignUp req);
+
+    @GetMapping("test-mail")
+    BaseResponse testMail();
+
 }

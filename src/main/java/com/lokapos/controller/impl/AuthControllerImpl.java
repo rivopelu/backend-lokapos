@@ -5,6 +5,7 @@ import com.lokapos.controller.AuthController;
 import com.lokapos.model.request.RequestSignUp;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.AuthService;
+import com.lokapos.services.EmailService;
 import lombok.RequiredArgsConstructor;
 import utils.ResponseHelper;
 
@@ -13,6 +14,7 @@ import utils.ResponseHelper;
 public class AuthControllerImpl implements AuthController {
 
     private final AuthService authService;
+    private final EmailService emailService;
 
     @Override
     public BaseResponse ping() {
@@ -22,5 +24,11 @@ public class AuthControllerImpl implements AuthController {
     @Override
     public BaseResponse signUp(RequestSignUp req) {
         return ResponseHelper.createBaseResponse(authService.signUp(req));
+    }
+
+    @Override
+    public BaseResponse testMail() {
+        emailService.testingSendMail();
+        return ResponseHelper.createBaseResponse("SUCCESS");
     }
 }
