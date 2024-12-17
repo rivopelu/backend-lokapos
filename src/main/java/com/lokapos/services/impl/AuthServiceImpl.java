@@ -4,7 +4,10 @@ import com.lokapos.entities.Account;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.enums.USER_ROLE_ENUM;
 import com.lokapos.exception.BadRequestException;
+import com.lokapos.exception.SystemErrorException;
+import com.lokapos.model.request.RequestSignIn;
 import com.lokapos.model.request.RequestSignUp;
+import com.lokapos.model.response.ResponseSignIn;
 import com.lokapos.repositories.AccountRepository;
 import com.lokapos.services.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +51,15 @@ public class AuthServiceImpl implements AuthService {
             return "SUCCESS";
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ResponseSignIn signIn(RequestSignIn req) {
+        try {
+            return  ResponseSignIn.builder().accessToken("TOKEN").build();
+        }catch (Exception e){
+            throw new SystemErrorException(e);
         }
     }
 }

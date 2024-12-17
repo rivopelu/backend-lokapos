@@ -2,6 +2,7 @@ package com.lokapos.controller.impl;
 
 import com.lokapos.annotations.BaseControllerImpl;
 import com.lokapos.controller.AuthController;
+import com.lokapos.model.request.RequestSignIn;
 import com.lokapos.model.request.RequestSignUp;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.AuthService;
@@ -30,5 +31,10 @@ public class AuthControllerImpl implements AuthController {
     public BaseResponse testMail() {
         emailService.testingSendMail();
         return ResponseHelper.createBaseResponse("SUCCESS");
+    }
+
+    @Override
+    public BaseResponse signIn(RequestSignIn req) {
+        return ResponseHelper.createBaseResponse(authService.signIn(req));
     }
 }
