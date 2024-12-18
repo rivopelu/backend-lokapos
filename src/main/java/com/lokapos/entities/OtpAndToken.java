@@ -28,5 +28,8 @@ public class OtpAndToken extends BaseEntity {
     @ManyToOne
     private Account account;
 
+    @Column(name = "expire_date")
+    private Long expireDate;
+
 
 }

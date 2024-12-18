@@ -71,7 +71,6 @@ public class AccountServiceImpl implements AccountService {
         otp.setActive(false);
         otpAndTokenRepository.save(otp);
         try {
-
             return "SUCCESS";
         } catch (Exception e) {
             throw new SystemErrorException(e);
