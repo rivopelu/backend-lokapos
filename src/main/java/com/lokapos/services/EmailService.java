@@ -6,4 +6,6 @@ public interface EmailService {
 
     void testingSendMail();
 
+    void SendingOtpSignUp(String otp, Account account);
+
 }

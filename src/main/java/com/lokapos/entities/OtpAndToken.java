@@ -17,7 +17,7 @@ import java.math.BigInteger;
 public class OtpAndToken extends BaseEntity {
 
     @Column(name = "otp")
-    private BigInteger otp;
+    private String otp;
 
     @Column(name = "token")
     private String token;
