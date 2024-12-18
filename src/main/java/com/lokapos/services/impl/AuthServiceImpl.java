@@ -10,12 +10,19 @@ import com.lokapos.model.request.RequestSignUp;
 import com.lokapos.model.response.ResponseSignIn;
 import com.lokapos.repositories.AccountRepository;
 import com.lokapos.services.AuthService;
+import com.lokapos.services.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import utils.EntityUtils;
 
 import javax.swing.text.html.parser.Entity;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +30,8 @@ public class AuthServiceImpl implements AuthService {
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
     @Override
     public String ping() {
         return "PONG";
@@ -56,9 +64,23 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseSignIn signIn(RequestSignIn req) {
+        Account account = accountRepository.findByEmailAndActiveIsTrue(req.getEmail()).orElseThrow(() -> new BadRequestException(RESPONSE_ENUM.SIGN_IN_FAILED.name()));
         try {
-            return  ResponseSignIn.builder().accessToken("TOKEN").build();
+            return  getSignIn(account, req.getPassword());
         }catch (Exception e){
+            throw new SystemErrorException(e);
+        }
+    }
+
+    private ResponseSignIn getSignIn(Account account, String password) {
+        try {
+            Authentication authentication;
+            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(account.getUsername(), password));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String jwt = jwtService.generateToken(userDetails);
+            return ResponseSignIn.builder().accessToken(jwt).build();
+        } catch (Exception e) {
             throw new SystemErrorException(e);
         }
     }
