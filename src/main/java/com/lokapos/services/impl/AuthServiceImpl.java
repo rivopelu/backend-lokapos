@@ -67,10 +67,12 @@ public class AuthServiceImpl implements AuthService {
                     .build();
             EntityUtils.created(account, "SYSTEM");
             account = accountRepository.save(account);
+            Long expireTime = UtilsHelper.getExpireOnMinutes(3);
             OtpAndToken otpAndToken = OtpAndToken.builder()
                     .otp(otp)
                     .type(OTP_AND_TOKEN_TYPE_ENUM.SIGN_UP_OTP)
                     .account(account)
+                    .expireDate(expireTime)
                     .build();
             EntityUtils.created(otpAndToken, account.getId());
             otpAndTokenRepository.save(otpAndToken);

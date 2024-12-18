@@ -66,6 +66,9 @@ public class AccountServiceImpl implements AccountService {
             throw new BadRequestException(RESPONSE_ENUM.OTP_INVALID.name());
         }
         OtpAndToken otp = findOtp.get();
+        if (otp.getExpireDate() < System.currentTimeMillis()) {
+            throw new BadRequestException(RESPONSE_ENUM.OTP_EXPIRED.name());
+        }
         account.setIsVerifiedEmail(true);
         accountRepository.save(account);
         otp.setActive(false);
@@ -83,6 +86,9 @@ public class AccountServiceImpl implements AccountService {
         OtpAndToken otp = otpAndTokenRepository.findByAccountIdAndActiveIsTrueAndType(account.getId(), OTP_AND_TOKEN_TYPE_ENUM.SIGN_UP_OTP).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.NOT_FOUND_OTP.name()));
         String generateOtp = UtilsHelper.generateNumericOTP();
         otp.setOtp(generateOtp);
+        Long generateExpire = UtilsHelper.getExpireOnMinutes(3);
+        otp.setExpireDate(generateExpire);
+
         otpAndTokenRepository.save(otp);
         emailService.SendingOtpSignUp(generateOtp, account);
         try {

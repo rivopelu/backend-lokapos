@@ -3,6 +3,7 @@ package utils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.security.SecureRandom;
+import java.util.Date;
 
 public class UtilsHelper {
 
@@ -12,6 +13,11 @@ public class UtilsHelper {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static Long getExpireOnMinutes(int minute) {
+        long currentTime = new Date().getTime();
+        return (currentTime + (long) minute * 60 * 1000);
     }
 
     public static String generateNumericOTP() {
