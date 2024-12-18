@@ -23,4 +23,9 @@ public class AccountControllerImpl implements AccountController {
     public BaseResponse verifyEmail(ReqOtp req) {
         return ResponseHelper.createBaseResponse(accountService.verifyEmail(req));
     }
+
+    @Override
+    public BaseResponse resendVerificationEmail() {
+        return ResponseHelper.createBaseResponse(accountService.resendVerificationEmail());
+    }
 }

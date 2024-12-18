@@ -12,4 +12,6 @@ public interface AccountService {
     Account getCurrentAccount();
 
     String verifyEmail(ReqOtp req);
+
+    RESPONSE_ENUM resendVerificationEmail();
 }

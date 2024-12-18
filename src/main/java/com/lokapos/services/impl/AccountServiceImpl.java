@@ -3,18 +3,22 @@ package com.lokapos.services.impl;
 import com.lokapos.constants.AuthConstant;
 import com.lokapos.entities.Account;
 import com.lokapos.entities.OtpAndToken;
+import com.lokapos.enums.OTP_AND_TOKEN_TYPE_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.NotAuthorizedException;
+import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqOtp;
 import com.lokapos.model.response.ResponseGetMe;
 import com.lokapos.repositories.AccountRepository;
 import com.lokapos.repositories.OtpAndTokenRepository;
 import com.lokapos.services.AccountService;
+import com.lokapos.services.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import utils.UtilsHelper;
 
 import java.util.Optional;
 
@@ -25,6 +29,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepository accountRepository;
     private final HttpServletRequest httpServletRequest;
     private final OtpAndTokenRepository otpAndTokenRepository;
+    private final EmailService emailService;
 
     @Override
     public ResponseGetMe getMe() throws NotAuthorizedException {
@@ -71,5 +76,21 @@ public class AccountServiceImpl implements AccountService {
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    @Override
+    public RESPONSE_ENUM resendVerificationEmail() {
+        Account account = getCurrentAccount();
+        OtpAndToken otp = otpAndTokenRepository.findByAccountIdAndActiveIsTrueAndType(account.getId(), OTP_AND_TOKEN_TYPE_ENUM.SIGN_UP_OTP).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.NOT_FOUND_OTP.name()));
+        String generateOtp = UtilsHelper.generateNumericOTP();
+        otp.setOtp(generateOtp);
+        otpAndTokenRepository.save(otp);
+        emailService.SendingOtpSignUp(generateOtp, account);
+        try {
+            return RESPONSE_ENUM.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+
     }
 }
