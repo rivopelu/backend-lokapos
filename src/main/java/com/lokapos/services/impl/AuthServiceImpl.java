@@ -56,7 +56,6 @@ public class AuthServiceImpl implements AuthService {
         try {
 
             String otp = UtilsHelper.generateNumericOTP();
-            String encodeOtp = passwordEncoder.encode(otp);
             String encodedPassword = passwordEncoder.encode(req.getPassword());
             Account account = Account.builder()
                     .firstName(req.getFirstName())
@@ -68,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
             EntityUtils.created(account, "SYSTEM");
             account = accountRepository.save(account);
             OtpAndToken otpAndToken = OtpAndToken.builder()
-                    .otp(encodeOtp)
+                    .otp(otp)
                     .type(OTP_AND_TOKEN_TYPE_ENUM.SIGN_UP_OTP)
                     .account(account)
                     .build();
