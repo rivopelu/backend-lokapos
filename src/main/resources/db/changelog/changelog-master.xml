@@ -10,4 +10,5 @@
     <include file="classpath:db/changelog/1.1.0_add_table_column_otp_and_token.xml"/>
     <include file="classpath:db/changelog/1.1.1_add_column_verified_email.xml"/>
     <include file="classpath:db/changelog/1.1.2_add_column_expire_date.xml"/>
+    <include file="classpath:db/changelog/1.2.0_add_table_province.xml"/>
 </databaseChangeLog>
