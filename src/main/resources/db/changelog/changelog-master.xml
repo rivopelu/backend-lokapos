@@ -12,4 +12,5 @@
     <include file="classpath:db/changelog/1.1.2_add_column_expire_date.xml"/>
     <include file="classpath:db/changelog/1.2.0_add_table_province.xml"/>
     <include file="classpath:db/changelog/1.2.1_add_table_city.xml"/>
+
 </databaseChangeLog>
