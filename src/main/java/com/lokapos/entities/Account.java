@@ -39,11 +39,13 @@ public class Account extends BaseEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private USER_ROLE_ENUM role;
 
+    @Column(name = "is_verified_email")
+    private Boolean isVerifiedEmail;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
-
     }
 
     @Override

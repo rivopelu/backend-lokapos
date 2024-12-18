@@ -15,8 +15,10 @@ import lombok.NoArgsConstructor;
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RequestSignUp {
+
     private String firstName;
     private String lastName;
     private String email;
     private String password;
+    
 }
