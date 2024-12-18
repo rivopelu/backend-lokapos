@@ -9,6 +9,7 @@
             <column name="is_verified_email" type="tinyint" defaultValue="0">
                 <constraints nullable="false"/>
             </column>
+
         </addColumn>
     </changeSet>
 </databaseChangeLog>

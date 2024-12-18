@@ -5,8 +5,6 @@ import com.lokapos.enums.OTP_AND_TOKEN_TYPE_ENUM;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigInteger;
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
@@ -23,6 +21,7 @@ public class OtpAndToken extends BaseEntity {
     private String token;
 
     @Column(name = "otp_and_token_type")
+    @Enumerated(EnumType.STRING)
     private OTP_AND_TOKEN_TYPE_ENUM type;
 
     @JoinColumn(name = "account_id")

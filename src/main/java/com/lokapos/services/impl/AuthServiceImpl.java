@@ -48,10 +48,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String signUp(RequestSignUp req) {
         boolean checkEmail = accountRepository.existsByEmailAndActiveIsTrue(req.getEmail());
+
         if (checkEmail) {
             throw new BadRequestException(RESPONSE_ENUM.EMAIL_ALREADY_EXIST.name());
         }
-
 
         try {
 
@@ -61,6 +61,7 @@ public class AuthServiceImpl implements AuthService {
                     .firstName(req.getFirstName())
                     .lastName(req.getLastName())
                     .email(req.getEmail())
+                    .isVerifiedEmail(false)
                     .role(USER_ROLE_ENUM.ADMIN)
                     .password(encodedPassword)
                     .build();
