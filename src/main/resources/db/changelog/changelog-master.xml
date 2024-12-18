@@ -13,5 +13,5 @@
     <include file="classpath:db/changelog/1.2.0_add_table_province.xml"/>
     <include file="classpath:db/changelog/1.2.1_add_table_city.xml"/>
     <include file="classpath:db/changelog/1.2.2_add_table_district.xml"/>
-
+    <include file="classpath:db/changelog/1.2.3_add_table_sub_district.xml"/>
 </databaseChangeLog>
