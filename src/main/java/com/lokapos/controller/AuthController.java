@@ -20,7 +20,6 @@ public interface AuthController {
     @GetMapping("test-mail")
     BaseResponse testMail();
 
-
     @PostMapping("v1/sign-in")
     BaseResponse signIn(@RequestBody RequestSignIn req);
 

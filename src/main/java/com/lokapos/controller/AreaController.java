@@ -25,5 +25,5 @@ public interface AreaController {
 
     @GetMapping("v1/get-area-sub-district")
     BaseResponse getAreaSubDistrict(@RequestParam("q") String q);
-    
+
 }
