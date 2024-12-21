@@ -42,4 +42,7 @@ public class Business extends BaseEntity {
     @Column(name = "subscription_expire_date")
     private Long subscriptionExpireDate;
 
+    @Column(name = "logo")
+    private String logo;
+
 }

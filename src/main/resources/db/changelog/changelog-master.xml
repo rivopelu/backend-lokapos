@@ -18,4 +18,5 @@
     <include file="classpath:db/changelog/1.3.0_add_table_business.xml"/>
     <include file="classpath:db/changelog/1.3.1_add_column_for_business.xml"/>
     <include file="classpath:db/changelog/1.3.2_add_column_business_account.xml"/>
+    <include file="classpath:db/changelog/1.3.3_add_column_logo_business.xml"/>
 </databaseChangeLog>
