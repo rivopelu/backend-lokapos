@@ -7,6 +7,7 @@ import com.lokapos.entities.SubDistrict;
 import com.lokapos.model.response.ResponseArea;
 import com.lokapos.model.response.ResponseFullAddress;
 
+import java.awt.geom.Area;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -24,5 +25,13 @@ public interface AreaService {
     String getFullAddress(Province province, City city, District district, SubDistrict subDistrict);
 
     List<ResponseFullAddress> getAreaSubDistrict(String q);
+
+    Province getProvinceById(BigInteger id);
+
+    City getCityById(BigInteger id);
+
+    District getDistrictById(BigInteger id);
+
+    SubDistrict getSubDistrictById(BigInteger id);
 
 }

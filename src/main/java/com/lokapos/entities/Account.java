@@ -45,7 +45,7 @@ public class Account extends BaseEntity implements UserDetails {
 
     @JoinColumn(name = "business_id")
     @ManyToOne
-    private Business businessId;
+    private Business business;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

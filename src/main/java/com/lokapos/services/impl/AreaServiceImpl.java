@@ -4,6 +4,8 @@ import com.lokapos.entities.City;
 import com.lokapos.entities.District;
 import com.lokapos.entities.Province;
 import com.lokapos.entities.SubDistrict;
+import com.lokapos.enums.RESPONSE_ENUM;
+import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.response.ResponseArea;
 import com.lokapos.model.response.ResponseFullAddress;
@@ -144,6 +146,28 @@ public class AreaServiceImpl implements AreaService {
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    @Override
+    public Province getProvinceById(BigInteger id) {
+        return provinceRepository.findById(id).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.PROVINCE_NOT_FOUND.name()));
+    }
+
+    @Override
+    public City getCityById(BigInteger id) {
+        return cityRepository.findById(id).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.CITY_NOT_FOUND.name()));
+    }
+
+    @Override
+    public District getDistrictById(BigInteger id) {
+        return districtRepository.findById(id).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.DISTRICT_NOT_FOUND.name()));
+
+    }
+
+    @Override
+    public SubDistrict getSubDistrictById(BigInteger id) {
+        return subDistrictRepository.findById(id).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.SUB_DISTRICT_NOT_FOUND.name()));
+
     }
 
 

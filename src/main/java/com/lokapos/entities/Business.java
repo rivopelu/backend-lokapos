@@ -4,6 +4,8 @@ package com.lokapos.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigInteger;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
@@ -18,23 +20,19 @@ public class Business extends BaseEntity {
     @Column(name = "address")
     private String address;
 
-    @JoinColumn(name = "province_id")
-    @ManyToOne
-    private Province province;
+    @Column(name = "province_id")
+    private BigInteger provinceId;
 
-    @JoinColumn(name = "city_id")
-    @ManyToOne
-    private City city;
+    @Column(name = "city_id")
+    private BigInteger cityId;
 
 
-    @JoinColumn(name = "district_id")
-    @ManyToOne
-    private District district;
+    @Column(name = "district_id")
+    private BigInteger districtId;
 
 
-    @JoinColumn(name = "sub_district_id")
-    @ManyToOne
-    private SubDistrict subDistrict;
+    @Column(name = "sub_district_id")
+    private BigInteger subDistrictId;
 
     @Column(name = "is_active_subscription")
     private Boolean isActiveSubscription;
