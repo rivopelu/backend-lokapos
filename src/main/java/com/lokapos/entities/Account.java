@@ -43,6 +43,10 @@ public class Account extends BaseEntity implements UserDetails {
     private Boolean isVerifiedEmail;
 
 
+    @JoinColumn(name = "business_id")
+    @ManyToOne
+    private Business businessId;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
