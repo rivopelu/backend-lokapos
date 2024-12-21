@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.3.3" author="admin">
+        <addColumn tableName="business">
+            <column name="business_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="province_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="city_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="district_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="sub_district_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="is_active_subscription" type="tinyint" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="subscription_expire_date" type="bigint">
+                <constraints/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
