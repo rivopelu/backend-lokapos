@@ -85,7 +85,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseSignIn signIn(RequestSignIn req) {
-        Account account = accountRepository.findByEmailAndActiveIsTrue(req.getEmail()).orElseThrow(() -> new BadRequestException(RESPONSE_ENUM.SIGN_IN_FAILED.name()));
+        Optional<Account> findAccount = accountRepository.findByEmailAndActiveIsTrue(req.getEmail());
+        if (findAccount.isEmpty()){
+            throw new BadRequestException(RESPONSE_ENUM.SIGN_IN_FAILED.name());
+        }
+        Account account = findAccount.get();
         try {
             return getSignIn(account, req.getPassword());
         } catch (Exception e) {

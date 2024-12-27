@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class LokaposApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(LokaposApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(LokaposApplication.class, args);
+    }
 }
