@@ -21,5 +21,6 @@ public class ResponseGetMe {
     private String lastName;
     private String email;
     private String id;
+    private ResponseBusinessDetail business;
 
 }

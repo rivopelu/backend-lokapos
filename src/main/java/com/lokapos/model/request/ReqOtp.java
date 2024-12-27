@@ -17,5 +17,6 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ReqOtp {
     private String otp;
+    private String email;
 
 }

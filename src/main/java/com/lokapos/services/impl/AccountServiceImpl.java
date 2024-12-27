@@ -1,8 +1,7 @@
 package com.lokapos.services.impl;
 
 import com.lokapos.constants.AuthConstant;
-import com.lokapos.entities.Account;
-import com.lokapos.entities.OtpAndToken;
+import com.lokapos.entities.*;
 import com.lokapos.enums.OTP_AND_TOKEN_TYPE_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.BadRequestException;
@@ -10,10 +9,11 @@ import com.lokapos.exception.NotAuthorizedException;
 import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqOtp;
+import com.lokapos.model.response.ResponseBusinessDetail;
 import com.lokapos.model.response.ResponseGetMe;
-import com.lokapos.repositories.AccountRepository;
-import com.lokapos.repositories.OtpAndTokenRepository;
+import com.lokapos.repositories.*;
 import com.lokapos.services.AccountService;
+import com.lokapos.services.AreaService;
 import com.lokapos.services.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -30,20 +30,32 @@ public class AccountServiceImpl implements AccountService {
     private final HttpServletRequest httpServletRequest;
     private final OtpAndTokenRepository otpAndTokenRepository;
     private final EmailService emailService;
+    private final ProvinceRepository provinceRepository;
+    private final CityRepository cityRepository;
+    private final DistrictRepository districtRepository;
+    private final SubDistrictRepository subDistrictRepository;
+    private final AreaService areaService;
 
     @Override
     public ResponseGetMe getMe() throws NotAuthorizedException {
         try {
+            ResponseBusinessDetail responseBusinessDetail = null;
             Account account = getCurrentAccount();
             if (account == null) {
                 throw new NotAuthorizedException(RESPONSE_ENUM.NOT_AUTHORIZED.name());
             }
+            if (account.getBusiness() != null){
+                responseBusinessDetail = getBusinessDetail(account.getBusiness());
+            }
+
+
             return ResponseGetMe.builder()
                     .fullName(account.getFirstName() + " " + account.getLastName())
                     .firstName(account.getFirstName())
                     .lastName(account.getLastName())
                     .email(account.getEmail())
                     .id(account.getId())
+                    .business(responseBusinessDetail)
                     .build();
 
         } catch (Exception e) {
@@ -98,4 +110,36 @@ public class AccountServiceImpl implements AccountService {
         }
 
     }
+
+    @Override
+    public ResponseBusinessDetail getBusinessDetail(Business business) {
+
+        Province province = provinceRepository.findById(business.getProvinceId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.PROVINCE_NOT_FOUND.name()));
+        City city = cityRepository.findById(business.getCityId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.CITY_NOT_FOUND.name()));
+        District district = districtRepository.findById(business.getDistrictId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.DISTRICT_NOT_FOUND.name()));
+        SubDistrict subDistrict = subDistrictRepository.findById(business.getSubDistrictId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.SUB_DISTRICT_NOT_FOUND.name()));
+
+        String fullAddress = areaService.getFullAddress(province, city, district, subDistrict);
+
+        try {
+            return ResponseBusinessDetail.builder()
+                    .businessName(business.getBusinessName())
+                    .businessId(business.getId())
+                    .businessLogo(business.getLogo())
+                    .businessFullAddress(fullAddress)
+                    .provinceName(province.getName())
+                    .cityName(city.getName())
+                    .districtName(district.getName())
+                    .subDistrictName(subDistrict.getName())
+                    .provinceId(province.getId())
+                    .cityId(city.getId())
+                    .districtId(district.getId())
+                    .subDistrictId(subDistrict.getId())
+                    .build();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+
 }

@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @BaseController("business")
 public interface BusinessController {
-    @PostMapping("/v1/new")
+
+    @PostMapping("v1/new")
     BaseResponse createBusiness(@RequestBody RequestCreateBusiness req);
+
 }

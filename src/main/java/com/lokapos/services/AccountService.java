@@ -1,9 +1,11 @@
 package com.lokapos.services;
 
 import com.lokapos.entities.Account;
+import com.lokapos.entities.Business;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.NotAuthorizedException;
 import com.lokapos.model.request.ReqOtp;
+import com.lokapos.model.response.ResponseBusinessDetail;
 import com.lokapos.model.response.ResponseGetMe;
 
 public interface AccountService {
@@ -14,4 +16,6 @@ public interface AccountService {
     String verifyEmail(ReqOtp req);
 
     RESPONSE_ENUM resendVerificationEmail();
+
+    ResponseBusinessDetail getBusinessDetail(Business business);
 }
