@@ -25,13 +25,13 @@ public class Merchant extends BaseEntity {
     private BigInteger provinceId;
 
     @Column(name = "city_id")
-    private String cityId;
+    private BigInteger cityId;
 
     @Column(name = "district_id")
-    private String districtId;
+    private BigInteger districtId;
 
     @Column(name = "sub_district_id")
-    private String subDistrictId;
+    private BigInteger subDistrictId;
 
     @JoinColumn(name = "business_id")
     @ManyToOne
