@@ -4,12 +4,16 @@ import com.lokapos.entities.SubscriptionPackage;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestSubscriptionPackage;
+import com.lokapos.model.response.ResponseSubscriptionPackage;
 import com.lokapos.repositories.SubscriptionPackageRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import utils.EntityUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +36,29 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             subscriptionPackageRepository.save(subscriptionPackage);
             return RESPONSE_ENUM.SUCCESS;
 
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public List<ResponseSubscriptionPackage> getListActiveSubscriptionsPackage() {
+
+        List<SubscriptionPackage> subscriptionPackageList = subscriptionPackageRepository.findAllByActiveIsTrue();
+
+        try {
+            List<ResponseSubscriptionPackage> responseSubscriptionPackageList = new ArrayList<>();
+            for (SubscriptionPackage subscriptionPackage : subscriptionPackageList) {
+                ResponseSubscriptionPackage responseSubscriptionPackage = ResponseSubscriptionPackage.builder()
+                        .name(subscriptionPackage.getName())
+                        .description(subscriptionPackage.getDescription())
+                        .active(subscriptionPackage.getActive())
+                        .duration(subscriptionPackage.getDurationPerDay())
+                        .price(subscriptionPackage.getPrice())
+                        .build();
+                responseSubscriptionPackageList.add(responseSubscriptionPackage);
+            }
+            return responseSubscriptionPackageList;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

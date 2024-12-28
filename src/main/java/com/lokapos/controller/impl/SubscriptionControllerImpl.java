@@ -18,4 +18,9 @@ public class SubscriptionControllerImpl implements SubscriptionController {
     public BaseResponse addSubscription(RequestSubscriptionPackage req) {
         return ResponseHelper.createBaseResponse(subscriptionService.addSubscriptionPackage(req));
     }
+
+    @Override
+    public BaseResponse getListActiveSubscriptionsPackage() {
+        return ResponseHelper.createBaseResponse(subscriptionService.getListActiveSubscriptionsPackage());
+    }
 }
