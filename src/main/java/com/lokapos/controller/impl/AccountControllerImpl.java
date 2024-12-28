@@ -6,6 +6,7 @@ import com.lokapos.model.request.ReqOtp;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.AccountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import utils.ResponseHelper;
 
 @BaseControllerImpl
@@ -27,5 +28,11 @@ public class AccountControllerImpl implements AccountController {
     @Override
     public BaseResponse resendVerificationEmail() {
         return ResponseHelper.createBaseResponse(accountService.resendVerificationEmail());
+    }
+
+    @Override
+    public BaseResponse getListAccountAdmin(Pageable pageable) {
+
+        return  ResponseHelper.createBaseResponse(accountService.getListAccountAdmin(pageable));
     }
 }

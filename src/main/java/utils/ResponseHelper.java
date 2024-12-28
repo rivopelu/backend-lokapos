@@ -21,17 +21,6 @@ public class ResponseHelper {
                 .build();
     }
 
-    public static <T> BaseResponse createBaseResponse(Slice<T> data) {
-        return BaseResponse.builder()
-                .isFirst(data.isFirst())
-                .isLast(data.isLast())
-                .hasNext(data.hasNext())
-                .responseData(data.getContent())
-                .totalData(Long.parseLong(String.valueOf(data.getNumberOfElements())))
-                .currentPage(data.getPageable().getPageNumber())
-                .build();
-    }
-
     public static <T> BaseResponse createBaseResponse(List<T> data) {
         return BaseResponse.builder()
                 .responseData(data)
@@ -44,11 +33,6 @@ public class ResponseHelper {
                 .build();
     }
 
-    public static BaseResponse createBaseResponse(String massage) {
-        return BaseResponse.builder()
-                .message(massage)
-                .build();
-    }
 
     public static BaseResponse createBaseResponse() {
         return BaseResponse.builder()

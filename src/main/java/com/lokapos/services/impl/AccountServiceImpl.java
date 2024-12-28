@@ -11,15 +11,22 @@ import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqOtp;
 import com.lokapos.model.response.ResponseBusinessDetail;
 import com.lokapos.model.response.ResponseGetMe;
+import com.lokapos.model.response.ResponseListAccount;
 import com.lokapos.repositories.*;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.AreaService;
 import com.lokapos.services.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import utils.UtilsHelper;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,6 +42,7 @@ public class AccountServiceImpl implements AccountService {
     private final DistrictRepository districtRepository;
     private final SubDistrictRepository subDistrictRepository;
     private final AreaService areaService;
+    private final BusinessRepository businessRepository;
 
     @Override
     public ResponseGetMe getMe() throws NotAuthorizedException {
@@ -44,7 +52,7 @@ public class AccountServiceImpl implements AccountService {
             if (account == null) {
                 throw new NotAuthorizedException(RESPONSE_ENUM.NOT_AUTHORIZED.name());
             }
-            if (account.getBusiness() != null){
+            if (account.getBusiness() != null) {
                 responseBusinessDetail = getBusinessDetail(account.getBusiness());
             }
 
@@ -136,6 +144,49 @@ public class AccountServiceImpl implements AccountService {
                     .districtId(district.getId())
                     .subDistrictId(subDistrict.getId())
                     .build();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public Page<ResponseListAccount> getListAccountAdmin(Pageable pageable) {
+        Long totalData = 0L;
+        String businessId = getCurrentBusinessIdOrNull();
+        List<ResponseListAccount> responseListAccounts = new ArrayList<>();
+
+        if (businessId != null) {
+            Page<Account> accountPage = accountRepository.findAllByBusinessIdAndActiveIsTrue(pageable, businessId);
+            for (Account account : accountPage.getContent()) {
+                ResponseListAccount responseListAccount = ResponseListAccount.builder()
+                        .firstName(account.getFirstName())
+                        .lastName(account.getLastName())
+                        .fullName(account.getFirstName() + " " + account.getLastName())
+                        .role(account.getRole())
+                        .email(account.getEmail())
+                        .build();
+                responseListAccounts.add(responseListAccount);
+            }
+            totalData = accountPage.getTotalElements();
+        }
+        try {
+
+            return new PageImpl<>(responseListAccounts, pageable, totalData);
+
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public String getCurrentBusinessIdOrNull() {
+        String businessId = null;
+        try {
+            Account account = getCurrentAccount();
+            if (account.getBusiness() != null) {
+                businessId = account.getBusiness().getId();
+            }
+            return businessId;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
