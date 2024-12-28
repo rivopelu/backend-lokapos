@@ -1,4 +1,4 @@
-package utils;
+package com.lokapos.advices;
 
 import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.NotAuthorizedException;

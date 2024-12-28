@@ -22,6 +22,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static com.lokapos.constants.AuthConstant.HEADER_X_WHO;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -38,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws IOException {
         try {
+
             final String authHeader = request.getHeader("Authorization");
             final String jwt;
             final String userEmail;
@@ -60,8 +63,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .setSigningKey(AuthConstant.SECRET)
                             .parseClaimsJws(jwt)
                             .getBody();
-                    String userId = claims.get(AuthConstant.HEADER_X_WHO, String.class);
-                    request.setAttribute(AuthConstant.HEADER_X_WHO, userId);
+                    String userId = claims.get(HEADER_X_WHO, String.class);
+                    request.setAttribute(HEADER_X_WHO, userId);
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
@@ -94,4 +97,3 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
 }
-

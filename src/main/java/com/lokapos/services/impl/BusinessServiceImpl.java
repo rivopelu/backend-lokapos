@@ -4,7 +4,6 @@ import com.lokapos.entities.Account;
 import com.lokapos.entities.Business;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.BadRequestException;
-import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateBusiness;
 import com.lokapos.repositories.AccountRepository;
