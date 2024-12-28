@@ -79,6 +79,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public String getCurrentAccountId() {
+        return getCurrentAccount().getId();
+    }
+
+    @Override
     public String verifyEmail(ReqOtp req) {
         Account account = getCurrentAccount();
         Optional<OtpAndToken> findOtp = otpAndTokenRepository.queryFindOtp(req.getOtp(), account.getId());
