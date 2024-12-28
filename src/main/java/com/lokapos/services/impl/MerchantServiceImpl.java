@@ -7,12 +7,19 @@ import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateMerchant;
+import com.lokapos.model.response.ResponseListMerchant;
 import com.lokapos.repositories.MerchantRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.MerchantService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import utils.EntityUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +50,27 @@ public class MerchantServiceImpl implements MerchantService {
         try {
             merchantRepository.save(merchant);
             return RESPONSE_ENUM.SUCCESS;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public Page<ResponseListMerchant> getListMerchant(Pageable pageable) {
+        String businessId = accountService.getCurrentBusinessIdOrNull();
+
+        try {
+            Page<Merchant> merchantPage = merchantRepository.findByBusinessIdAndActiveIsTrue(pageable, businessId);
+            List<ResponseListMerchant> responseListMerchants = new ArrayList<>();
+
+            for (Merchant merchant : merchantPage.getContent()) {
+                ResponseListMerchant responseListMerchant = ResponseListMerchant.builder()
+                        .name(merchant.getMerchantName())
+                        .id(merchant.getId())
+                        .build();
+                responseListMerchants.add(responseListMerchant);
+            }
+            return new PageImpl<>(responseListMerchants, pageable, merchantPage.getTotalElements());
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

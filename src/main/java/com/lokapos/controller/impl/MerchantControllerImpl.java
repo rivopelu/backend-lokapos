@@ -7,6 +7,7 @@ import com.lokapos.model.request.RequestCreateMerchant;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.MerchantService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import utils.ResponseHelper;
 
@@ -17,5 +18,10 @@ public class MerchantControllerImpl implements MerchantController {
     @Override
     public BaseResponse createMerchant(RequestCreateMerchant req) {
         return ResponseHelper.createBaseResponse(merchantService.createMerchant(req));
+    }
+
+    @Override
+    public BaseResponse getListMerchant(Pageable pageable) {
+        return ResponseHelper.createBaseResponse(merchantService.getListMerchant(pageable));
     }
 }
