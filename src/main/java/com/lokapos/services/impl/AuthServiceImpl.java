@@ -90,17 +90,17 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException(RESPONSE_ENUM.SIGN_IN_FAILED.name());
         }
         Account account = findAccount.get();
-        try {
             return getSignIn(account, req.getPassword());
-        } catch (Exception e) {
-            throw new SystemErrorException(e);
-        }
     }
 
     private ResponseSignIn getSignIn(Account account, String password) {
+        Authentication authentication;
+        authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(account.getUsername(), password));
+        if(!authentication.isAuthenticated()){
+            throw new BadRequestException(RESPONSE_ENUM.INVALID_CREDENTIAL.name());
+        }
         try {
-            Authentication authentication;
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(account.getUsername(), password));
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String jwt = jwtService.generateToken(userDetails);

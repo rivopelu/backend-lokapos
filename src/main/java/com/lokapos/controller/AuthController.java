@@ -14,7 +14,7 @@ public interface AuthController {
     @GetMapping("ping")
     BaseResponse ping();
 
-    @PostMapping("sign-up")
+    @PostMapping("v1/sign-up")
     BaseResponse signUp(@RequestBody RequestSignUp req);
 
     @GetMapping("test-mail")
