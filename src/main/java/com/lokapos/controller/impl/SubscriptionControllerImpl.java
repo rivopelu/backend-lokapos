@@ -2,6 +2,7 @@ package com.lokapos.controller.impl;
 
 import com.lokapos.annotations.BaseControllerImpl;
 import com.lokapos.controller.SubscriptionController;
+import com.lokapos.model.request.RequestCreateSubscriptionOrder;
 import com.lokapos.model.request.RequestSubscriptionPackage;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.SubscriptionService;
@@ -22,5 +23,11 @@ public class SubscriptionControllerImpl implements SubscriptionController {
     @Override
     public BaseResponse getListActiveSubscriptionsPackage() {
         return ResponseHelper.createBaseResponse(subscriptionService.getListActiveSubscriptionsPackage());
+    }
+
+    @Override
+    public BaseResponse orderSubscription(RequestCreateSubscriptionOrder req) {
+
+        return  ResponseHelper.createBaseResponse(subscriptionService.orderSubscription(req));
     }
 }

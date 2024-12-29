@@ -2,6 +2,7 @@ package com.lokapos.controller;
 
 import com.lokapos.annotations.BaseController;
 import com.lokapos.annotations.SuperAdminAccess;
+import com.lokapos.model.request.RequestCreateSubscriptionOrder;
 import com.lokapos.model.request.RequestSubscriptionPackage;
 import com.lokapos.model.response.BaseResponse;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,5 +18,8 @@ public interface SubscriptionController {
 
     @GetMapping("v1/list/active")
     BaseResponse getListActiveSubscriptionsPackage();
+
+    @PostMapping("v1/order-subscription")
+    BaseResponse orderSubscription(@RequestBody RequestCreateSubscriptionOrder req);
 
 }

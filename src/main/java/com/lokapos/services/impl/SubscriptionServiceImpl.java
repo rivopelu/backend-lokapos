@@ -3,6 +3,7 @@ package com.lokapos.services.impl;
 import com.lokapos.entities.SubscriptionPackage;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.SystemErrorException;
+import com.lokapos.model.request.RequestCreateSubscriptionOrder;
 import com.lokapos.model.request.RequestSubscriptionPackage;
 import com.lokapos.model.response.ResponseSubscriptionPackage;
 import com.lokapos.repositories.SubscriptionPackageRepository;
@@ -59,6 +60,15 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 responseSubscriptionPackageList.add(responseSubscriptionPackage);
             }
             return responseSubscriptionPackageList;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public RESPONSE_ENUM orderSubscription(RequestCreateSubscriptionOrder req) {
+        try {
+            return RESPONSE_ENUM.SUCCESS;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
