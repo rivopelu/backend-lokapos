@@ -7,6 +7,7 @@ import com.lokapos.model.request.RequestSubscriptionPackage;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.SubscriptionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import utils.ResponseHelper;
 
 @RequiredArgsConstructor
@@ -29,5 +30,10 @@ public class SubscriptionControllerImpl implements SubscriptionController {
     public BaseResponse orderSubscription(RequestCreateSubscriptionOrder req) {
 
         return  ResponseHelper.createBaseResponse(subscriptionService.orderSubscription(req));
+    }
+
+    @Override
+    public BaseResponse getListOrderSubscriptions(Pageable pageable) {
+        return ResponseHelper.createBaseResponse(subscriptionService.getListOrderSubscriptions(pageable));
     }
 }

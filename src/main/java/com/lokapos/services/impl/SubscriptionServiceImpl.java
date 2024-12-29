@@ -12,6 +12,7 @@ import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqPaymentObject;
 import com.lokapos.model.request.RequestCreateSubscriptionOrder;
 import com.lokapos.model.request.RequestSubscriptionPackage;
+import com.lokapos.model.response.ResponseListSubscriptionOrder;
 import com.lokapos.model.response.ResponseSubscriptionPackage;
 import com.lokapos.model.response.SnapPaymentResponse;
 import com.lokapos.repositories.SubscriptionOrderRepository;
@@ -20,6 +21,9 @@ import com.lokapos.services.AccountService;
 import com.lokapos.services.PaymentService;
 import com.lokapos.services.SubscriptionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import utils.EntityUtils;
 
@@ -84,7 +88,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
         SubscriptionPackage subscriptionPackage = subscriptionPackageRepository.findById(req.getPackageId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.PACKAGE_NOT_FOUND.name()));
         Account account = accountService.getCurrentAccount();
-        if(account.getBusiness() == null){
+        if (account.getBusiness() == null) {
             throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
         }
         Business business = account.getBusiness();
@@ -121,6 +125,30 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         subscriptionOrderRepository.save(subscriptionOrder);
         try {
             return snapPaymentResponse;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public Page<ResponseListSubscriptionOrder> getListOrderSubscriptions(Pageable pageable) {
+        String businessId = accountService.getCurrentBusinessIdOrNull();
+
+        try {
+            Page<SubscriptionOrder> subscriptionOrderPage = subscriptionOrderRepository.findAllByBusinessIdAndActiveIsTrue(businessId, pageable);
+            List<ResponseListSubscriptionOrder> responseListSubscriptionOrderList = new ArrayList<>();
+            for (SubscriptionOrder subscriptionOrder : subscriptionOrderPage) {
+                ResponseListSubscriptionOrder responseListSubscriptionOrder = ResponseListSubscriptionOrder.builder()
+                        .id(subscriptionOrder.getId())
+                        .packageName(subscriptionOrder.getSubscriptionPackage().getName())
+                        .totalTransaction(subscriptionOrder.getTotalTransaction())
+                        .createdDate(subscriptionOrder.getCreatedDate())
+                        .status(subscriptionOrder.getStatus())
+                        .duration(subscriptionOrder.getSubscriptionPackage().getDurationPerDay())
+                        .build();
+                responseListSubscriptionOrderList.add(responseListSubscriptionOrder);
+            }
+            return new PageImpl<>(responseListSubscriptionOrderList, pageable, subscriptionOrderPage.getTotalElements());
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
