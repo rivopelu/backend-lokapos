@@ -21,5 +21,6 @@ public class ResponseSubscriptionPackage {
     private String description;
     private BigInteger duration;
     private BigInteger price;
+    private String id;
     private Boolean active;
 }

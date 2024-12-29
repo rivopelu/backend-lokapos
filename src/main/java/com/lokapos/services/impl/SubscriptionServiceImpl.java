@@ -65,6 +65,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             for (SubscriptionPackage subscriptionPackage : subscriptionPackageList) {
                 ResponseSubscriptionPackage responseSubscriptionPackage = ResponseSubscriptionPackage.builder()
                         .name(subscriptionPackage.getName())
+                        .id(subscriptionPackage.getId())
                         .description(subscriptionPackage.getDescription())
                         .active(subscriptionPackage.getActive())
                         .duration(subscriptionPackage.getDurationPerDay())
