@@ -2,8 +2,10 @@ package com.lokapos.services.impl;
 
 import com.lokapos.entities.Account;
 import com.lokapos.entities.Business;
+import com.lokapos.entities.SubscriptionOrder;
 import com.lokapos.entities.SubscriptionPackage;
 import com.lokapos.enums.RESPONSE_ENUM;
+import com.lokapos.enums.SUBSCRIPTION_ORDER_STATUS_ENUM;
 import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
@@ -12,6 +14,7 @@ import com.lokapos.model.request.RequestCreateSubscriptionOrder;
 import com.lokapos.model.request.RequestSubscriptionPackage;
 import com.lokapos.model.response.ResponseSubscriptionPackage;
 import com.lokapos.model.response.SnapPaymentResponse;
+import com.lokapos.repositories.SubscriptionOrderRepository;
 import com.lokapos.repositories.SubscriptionPackageRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.PaymentService;
@@ -31,6 +34,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final AccountService accountService;
     private final SubscriptionPackageRepository subscriptionPackageRepository;
     private final PaymentService paymentService;
+    private final SubscriptionOrderRepository subscriptionOrderRepository;
+
     @Override
     public RESPONSE_ENUM addSubscriptionPackage(RequestSubscriptionPackage req) {
         try {
@@ -105,7 +110,14 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .build();
 
         SnapPaymentResponse snapPaymentResponse = paymentService.createPayment(reqPaymentObject);
-
+        SubscriptionOrder subscriptionOrder = SubscriptionOrder.builder()
+                .subscriptionPackage(subscriptionPackage)
+                .business(business)
+                .totalTransaction(subscriptionPackage.getPrice())
+                .status(SUBSCRIPTION_ORDER_STATUS_ENUM.PENDING)
+                .build();
+        EntityUtils.created(subscriptionOrder, account.getId());
+        subscriptionOrderRepository.save(subscriptionOrder);
         try {
             return snapPaymentResponse;
         } catch (Exception e) {
