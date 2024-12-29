@@ -40,7 +40,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         body.put("transaction_details", generateTransactionDetail(req.getTransactionDetail()));
         body.put("item_detail", generateItemsDetail(req.getItemsDetail()));
-        body.put("customer_details", generateCustomersDetail(req.getCustomersDetails()));
+//        body.put("customer_details", generateCustomersDetail(req.getCustomersDetails()));
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 

@@ -4,6 +4,7 @@ import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.model.request.RequestCreateSubscriptionOrder;
 import com.lokapos.model.request.RequestSubscriptionPackage;
 import com.lokapos.model.response.ResponseSubscriptionPackage;
+import com.lokapos.model.response.SnapPaymentResponse;
 
 import java.util.List;
 
@@ -12,5 +13,5 @@ public interface SubscriptionService {
 
     List<ResponseSubscriptionPackage> getListActiveSubscriptionsPackage();
 
-    RESPONSE_ENUM orderSubscription(RequestCreateSubscriptionOrder req);
+    SnapPaymentResponse orderSubscription(RequestCreateSubscriptionOrder req);
 }
