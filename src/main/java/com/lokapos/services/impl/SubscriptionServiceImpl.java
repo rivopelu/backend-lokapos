@@ -94,8 +94,18 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         Business business = account.getBusiness();
 
 
+        SubscriptionOrder subscriptionOrder = SubscriptionOrder.builder()
+                .subscriptionPackage(subscriptionPackage)
+                .business(business)
+                .totalTransaction(subscriptionPackage.getPrice())
+                .status(SUBSCRIPTION_ORDER_STATUS_ENUM.PENDING)
+                .build();
+        EntityUtils.created(subscriptionOrder, account.getId());
+        subscriptionOrder = subscriptionOrderRepository.save(subscriptionOrder);
+
+
         ReqPaymentObject.TransactionDetail transactionDetail = ReqPaymentObject.TransactionDetail.builder()
-                .orderId(subscriptionPackage.getId())
+                .orderId(subscriptionOrder.getId())
                 .grossAmount(subscriptionPackage.getPrice())
                 .build();
         ReqPaymentObject.ItemsDetail itemsDetail = ReqPaymentObject.ItemsDetail.builder()
@@ -115,14 +125,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .build();
 
         SnapPaymentResponse snapPaymentResponse = paymentService.createPayment(reqPaymentObject);
-        SubscriptionOrder subscriptionOrder = SubscriptionOrder.builder()
-                .subscriptionPackage(subscriptionPackage)
-                .business(business)
-                .totalTransaction(subscriptionPackage.getPrice())
-                .status(SUBSCRIPTION_ORDER_STATUS_ENUM.PENDING)
-                .build();
-        EntityUtils.created(subscriptionOrder, account.getId());
-        subscriptionOrderRepository.save(subscriptionOrder);
+
         try {
             return snapPaymentResponse;
         } catch (Exception e) {
