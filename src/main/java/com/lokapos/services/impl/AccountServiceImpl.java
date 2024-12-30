@@ -60,6 +60,7 @@ public class AccountServiceImpl implements AccountService {
             return ResponseGetMe.builder()
                     .fullName(account.getFirstName() + " " + account.getLastName())
                     .firstName(account.getFirstName())
+                    .isVerifiedEmail(account.getIsVerifiedEmail())
                     .lastName(account.getLastName())
                     .email(account.getEmail())
                     .id(account.getId())

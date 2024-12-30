@@ -20,6 +20,7 @@ public class ResponseGetMe {
     private String firstName;
     private String lastName;
     private String email;
+    private Boolean isVerifiedEmail;
     private String id;
     private ResponseBusinessDetail business;
 
