@@ -26,7 +26,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    private static final String[] WHITE_LIST_URL = {"/auth/**", "/area/**", "/public/**", "/upload/**"};
+    private static final String[] WHITE_LIST_URL = {"/auth/**", "/area/**", "/public/**", "/upload/**", "/webhook/**"};
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
