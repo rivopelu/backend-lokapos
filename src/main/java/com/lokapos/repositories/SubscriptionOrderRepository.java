@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SubscriptionOrderRepository extends JpaRepository<SubscriptionOrder, String> {
-    Page<SubscriptionOrder> findAllByBusinessIdAndActiveIsTrue(String businessId, Pageable pageable);
+    Page<SubscriptionOrder> findAllByBusinessIdAndActiveIsTrueOrderByCreatedDateDesc(String businessId, Pageable pageable);
 }

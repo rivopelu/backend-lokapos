@@ -138,7 +138,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         String businessId = accountService.getCurrentBusinessIdOrNull();
 
         try {
-            Page<SubscriptionOrder> subscriptionOrderPage = subscriptionOrderRepository.findAllByBusinessIdAndActiveIsTrue(businessId, pageable);
+            Page<SubscriptionOrder> subscriptionOrderPage = subscriptionOrderRepository.findAllByBusinessIdAndActiveIsTrueOrderByCreatedDateDesc(businessId, pageable);
             List<ResponseListSubscriptionOrder> responseListSubscriptionOrderList = new ArrayList<>();
             for (SubscriptionOrder subscriptionOrder : subscriptionOrderPage) {
                 ResponseListSubscriptionOrder responseListSubscriptionOrder = ResponseListSubscriptionOrder.builder()
