@@ -82,7 +82,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         subscriptionOrder = findOrder.get();
 
-        if ("accept".equals(req.getFraudStatus())) {
+        if ("settlement".equals(req.getTransactionStatus())) {
 
             Business business = subscriptionOrder.getBusiness();
             Long newExpiredDate = getALong(subscriptionOrder, business);
