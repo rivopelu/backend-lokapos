@@ -6,7 +6,7 @@ import com.lokapos.model.response.BaseResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@BaseController
+@BaseController("webhook")
 public interface WebHookController {
 
     @PostMapping("v1/notification/mid-trans-payment")
