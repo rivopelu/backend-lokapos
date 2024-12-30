@@ -135,7 +135,7 @@ public class PaymentServiceImpl implements PaymentService {
             currentExpiredDate = business.getSubscriptionExpireDate();
         }
 
-        BigInteger millisecondsInADay = BigInteger.valueOf(86400000L);
+        BigInteger millisecondsInADay = BigInteger.valueOf(86400000);
         BigInteger subscriptionDuration = millisecondsInADay.multiply(subscriptionDurationPerDay);
         return currentExpiredDate + subscriptionDuration.longValue();
     }
