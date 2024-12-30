@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.5.2" author="rivo pelu">
+        <createTable tableName="transaction_notification_subscription">
+            <!--            BASE ENTITY START-->
+            <column name="id" type="varchar(255)">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="active" type="int(1)" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(255)" defaultValue="SYSTEM">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="long">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deleted_date" type="long">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_date" type="long">
+                <constraints nullable="true"/>
+            </column>
+            <!--            BASE ENTITY END-->
+            <column name="transaction_time" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="transaction_status" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="transaction_id" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status_message" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status_code" type="INT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="signature_key" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="payment_type" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="order_id" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="merchant_id" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="masked_card" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="gross_amount" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="fraud_status" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="eci" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="currency" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="channel_response_message" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="channel_response_code" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="card_type" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="bank" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="approval_code" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="subscription_order_id" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="transaction_notification_subscription"
+                baseColumnNames="subscription_order_id"
+                referencedTableName="subscription_order"
+                referencedColumnNames="id"
+                constraintName="fk_transaction_subscription_order"/>
+
+    </changeSet>
+</databaseChangeLog>
