@@ -5,6 +5,7 @@ import com.lokapos.entities.SubscriptionOrder;
 import com.lokapos.entities.TransactionNotificationSubscription;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.enums.SUBSCRIPTION_ORDER_STATUS_ENUM;
+import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqNotificationMidTrans;
 import com.lokapos.model.request.ReqPaymentObject;
@@ -74,21 +75,23 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public String postNotificationFromMidTrans(ReqNotificationMidTrans req) {
         Optional<SubscriptionOrder> findOrder = subscriptionOrderRepository.findById(req.getOrderId());
+        if (findOrder.isEmpty()) {
+            throw new BadRequestException("Order not found");
+        }
         SubscriptionOrder subscriptionOrder = null;
 
-        if (findOrder.isPresent()) {
-            subscriptionOrder = findOrder.get();
+        subscriptionOrder = findOrder.get();
 
-            if ("settlement".equals(req.getTransactionStatus())) {
+        if ("settlement".equals(req.getTransactionStatus())) {
 
-                Business business = subscriptionOrder.getBusiness();
-                Long newExpiredDate = getALong(subscriptionOrder, business);
-                business.setSubscriptionExpireDate(newExpiredDate);
+            Business business = subscriptionOrder.getBusiness();
+            Long newExpiredDate = getALong(subscriptionOrder, business);
+            business.setSubscriptionExpireDate(newExpiredDate);
 
-                subscriptionOrder.setStatus(SUBSCRIPTION_ORDER_STATUS_ENUM.SUCCESS);
-                business.setIsActiveSubscription(true);
-                businessRepository.save(business);
-            }
+            subscriptionOrder.setStatus(SUBSCRIPTION_ORDER_STATUS_ENUM.SUCCESS);
+            business.setIsActiveSubscription(true);
+            subscriptionOrderRepository.save(subscriptionOrder);
+            businessRepository.save(business);
         }
 
         TransactionNotificationSubscription detail = TransactionNotificationSubscription.builder()

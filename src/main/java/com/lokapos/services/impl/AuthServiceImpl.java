@@ -42,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String ping() {
-        return "PONG";
+        return "PENG";
     }
 
     @Override
