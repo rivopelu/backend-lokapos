@@ -139,6 +139,8 @@ public class AccountServiceImpl implements AccountService {
                     .businessName(business.getBusinessName())
                     .businessId(business.getId())
                     .businessLogo(business.getLogo())
+                    .expireDate(business.getSubscriptionExpireDate())
+                    .isActiveSubscription(business.getIsActiveSubscription())
                     .businessFullAddress(fullAddress)
                     .provinceName(province.getName())
                     .cityName(city.getName())

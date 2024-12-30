@@ -29,4 +29,6 @@ public class ResponseBusinessDetail {
     private BigInteger cityId;
     private BigInteger districtId;
     private BigInteger subDistrictId;
+    private Long expireDate;
+    private Boolean isActiveSubscription;
 }
