@@ -121,6 +121,8 @@ public class MasterDataServiceImpl implements MasterDataService {
                         .categoryId(servingMenu.getCategoryMenu().getId())
                         .categoryName(servingMenu.getCategoryMenu().getName())
                         .image(servingMenu.getImage())
+                        .price(servingMenu.getPrice())
+                        .createdDate(servingMenu.getCreatedDate())
                         .build();
                 responseList.add(response);
             }

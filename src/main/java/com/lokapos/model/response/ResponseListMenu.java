@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -22,4 +24,6 @@ public class ResponseListMenu {
     private String categoryId;
     private String categoryName;
     private String image;
+    private BigInteger price;
+    private Long createdDate;
 }
