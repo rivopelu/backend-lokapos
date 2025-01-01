@@ -4,6 +4,7 @@ import com.lokapos.annotations.AdminAccess;
 import com.lokapos.annotations.BaseController;
 import com.lokapos.annotations.SuperAdminAccess;
 import com.lokapos.model.request.RequestCreateEditCategory;
+import com.lokapos.model.request.RequestCreateMenu;
 import com.lokapos.model.response.BaseResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,4 +20,7 @@ public interface MasterDataController {
 
     @GetMapping("v1/category/list")
     BaseResponse getAllCategories();
+
+    @PostMapping("v1/menu/new")
+    BaseResponse createNewMenu(@RequestBody RequestCreateMenu req);
 }

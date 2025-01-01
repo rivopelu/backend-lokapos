@@ -2,12 +2,16 @@ package com.lokapos.services.impl;
 
 import com.lokapos.entities.Account;
 import com.lokapos.entities.CategoryMenu;
+import com.lokapos.entities.ServingMenu;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.BadRequestException;
+import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateEditCategory;
+import com.lokapos.model.request.RequestCreateMenu;
 import com.lokapos.model.response.ResponseCategoryList;
 import com.lokapos.repositories.CategoryMenuRepository;
+import com.lokapos.repositories.ServingMenuRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.MasterDataService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +20,7 @@ import utils.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +28,7 @@ public class MasterDataServiceImpl implements MasterDataService {
 
     private final AccountService accountService;
     private final CategoryMenuRepository categoryMenuRepository;
+    private final ServingMenuRepository servingMenuRepository;
 
     @Override
     public String createNewCategory(List<RequestCreateEditCategory> req) {
@@ -66,6 +72,35 @@ public class MasterDataServiceImpl implements MasterDataService {
 
         try {
             return responseCategoryList;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public String createNewMenu(RequestCreateMenu req) {
+        CategoryMenu categoryMenu = categoryMenuRepository.findById(req.getCategoryId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.CATEGORY_NOT_FOUND.name()));
+        Account account = accountService.getCurrentAccount();
+        if (account.getBusiness() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
+        }
+
+        if (!Objects.equals(categoryMenu.getBusiness().getId(), account.getBusiness().getId())) {
+            throw new BadRequestException(RESPONSE_ENUM.CATEGORY_AND_BUSINESS_NOT_MATCH.name());
+        }
+        try {
+            ServingMenu servingMenu = ServingMenu.builder()
+                    .name(req.getName())
+                    .description(req.getDescription())
+                    .price(req.getPrice())
+                    .categoryMenu(categoryMenu)
+                    .business(account.getBusiness())
+                    .image(req.getImageUrl())
+                    .build();
+            EntityUtils.created(servingMenu, account.getId());
+            servingMenuRepository.save(servingMenu);
+
+            return RESPONSE_ENUM.SUCCESS.name();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
