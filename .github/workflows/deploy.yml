@@ -1,18 +1,14 @@
-name: DEPLOY STAGING
+name: Manual Deploy - Staging
 
 on:
-  push:
-    branches: [ "development" ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to (e.g., staging or production)'
+        required: true
+        default: 'staging'
+        # Add options for other environments if needed
 
-    workflow_dispatch:
-      inputs:
-        environment:
-          description: 'Environment to deploy to (e.g., staging or production)'
-          required: true
-          default: 'staging'
-        version:
-          description: 'Version number to deploy'
-          required: false
 jobs:
   build:
     runs-on: ubuntu-latest
