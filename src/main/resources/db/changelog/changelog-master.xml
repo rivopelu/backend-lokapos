@@ -24,4 +24,5 @@
     <include file="classpath:db/changelog/1.5.1_add_table_subscription_order.xml"/>
     <include file="classpath:db/changelog/1.5.2_add_table_subscription_notification.xml"/>
     <include file="classpath:db/changelog/1.6.0_add_table_category_menu.xml"/>
+    <include file="classpath:db/changelog/1.6.1_add_table_serving_menu.xml"/>
 </databaseChangeLog>
