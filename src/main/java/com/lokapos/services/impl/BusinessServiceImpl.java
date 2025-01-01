@@ -38,7 +38,7 @@ public class BusinessServiceImpl implements BusinessService {
                 .districtId(req.getDistrictId())
                 .subDistrictId(req.getSubDistrictId())
                 .isActiveSubscription(false)
-                .subscriptionExpireDate(0L)
+                .subscriptionExpireDate(null)
                 .logo(req.getLogo())
                 .build();
         EntityUtils.created(business, account.getId());
