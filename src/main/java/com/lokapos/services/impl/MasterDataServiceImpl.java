@@ -4,7 +4,9 @@ import com.lokapos.entities.Account;
 import com.lokapos.entities.CategoryMenu;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.BadRequestException;
+import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateEditCategory;
+import com.lokapos.model.response.ResponseCategoryList;
 import com.lokapos.repositories.CategoryMenuRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.MasterDataService;
@@ -45,5 +47,27 @@ public class MasterDataServiceImpl implements MasterDataService {
 
         categoryMenuRepository.saveAll(categoryMenuList);
         return RESPONSE_ENUM.SUCCESS.name();
+    }
+
+    @Override
+    public List<ResponseCategoryList> getAllCategories() {
+        String businessId = accountService.getCurrentBusinessIdOrNull();
+        List<CategoryMenu> categoryMenuList = categoryMenuRepository.findAllByBusinessIdAndActiveIsTrueOrderByCountDesc(businessId);
+        List<ResponseCategoryList> responseCategoryList = new ArrayList<>();
+
+        for (CategoryMenu categoryMenu : categoryMenuList) {
+            ResponseCategoryList response = ResponseCategoryList.builder()
+                    .name(categoryMenu.getName())
+                    .id(categoryMenu.getId())
+                    .build();
+            responseCategoryList.add(response);
+        }
+
+
+        try {
+            return responseCategoryList;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
     }
 }
