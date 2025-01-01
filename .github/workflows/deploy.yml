@@ -1,20 +1,17 @@
 name: DEPLOY STAGING
 
 on:
-    push:
-      branches: [ "development" ]
-      workflow_dispatch:
-        inputs:
-          environment:
-            description: 'Environment to deploy to (e.g., staging or production)'
-            required: true
-            default: 'staging'
-          version:
-            description: 'Version number to deploy'
-            required: false
-
-
-
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to (e.g., staging or production)'
+        required: true
+        default: 'staging'
+      version:
+        description: 'Version number to deploy'
+        required: false
+  push:
+    branches: [ "development" ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,6 +29,7 @@ jobs:
   deploy-server-1:
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' # Trigger only if manually dispatched
     steps:
       - name: RUNNING DEPLOY SERVER 1
         uses: appleboy/ssh-action@master
