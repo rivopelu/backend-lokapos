@@ -10,6 +10,7 @@ import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateEditCategory;
 import com.lokapos.model.request.RequestCreateMenu;
 import com.lokapos.model.response.ResponseCategoryList;
+import com.lokapos.model.response.ResponseListMenu;
 import com.lokapos.repositories.CategoryMenuRepository;
 import com.lokapos.repositories.ServingMenuRepository;
 import com.lokapos.services.AccountService;
@@ -101,6 +102,29 @@ public class MasterDataServiceImpl implements MasterDataService {
             servingMenuRepository.save(servingMenu);
 
             return RESPONSE_ENUM.SUCCESS.name();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public List<ResponseListMenu> getAllMenus() {
+        String businessId = accountService.getCurrentBusinessIdOrNull();
+        List<ServingMenu> servingMenuList = servingMenuRepository.findAllByBusinessIdAndActiveIsTrueOrderByCreatedDateDesc(businessId);
+        List<ResponseListMenu> responseList = new ArrayList<>();
+        try {
+            for (ServingMenu servingMenu : servingMenuList) {
+                ResponseListMenu response = ResponseListMenu.builder()
+                        .id(servingMenu.getId())
+                        .name(servingMenu.getName())
+                        .description(servingMenu.getDescription())
+                        .categoryId(servingMenu.getCategoryMenu().getId())
+                        .categoryName(servingMenu.getCategoryMenu().getName())
+                        .image(servingMenu.getImage())
+                        .build();
+                responseList.add(response);
+            }
+            return responseList;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

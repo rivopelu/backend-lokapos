@@ -23,4 +23,7 @@ public interface MasterDataController {
 
     @PostMapping("v1/menu/new")
     BaseResponse createNewMenu(@RequestBody RequestCreateMenu req);
+
+    @GetMapping("v1/menu/list")
+    BaseResponse getAllMenus();
 }
