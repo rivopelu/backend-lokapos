@@ -1,17 +1,19 @@
 name: DEPLOY STAGING
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to (e.g., staging or production)'
-        required: true
-        default: 'staging'
-      version:
-        description: 'Version number to deploy'
-        required: false
-#  push:
-#    branches: [ "development" ]
+    push:
+      branches: [ "development" ]
+      workflow_dispatch:
+        inputs:
+          environment:
+            description: 'Environment to deploy to (e.g., staging or production)'
+            required: true
+            default: 'staging'
+          version:
+            description: 'Version number to deploy'
+            required: false
+
+
 
 jobs:
   build:
