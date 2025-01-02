@@ -221,6 +221,7 @@ public class AccountServiceImpl implements AccountService {
                 .isVerifiedEmail(true)
                 .role(req.getRole())
                 .email(req.getEmail())
+                .business(account.getBusiness())
                 .avatar(UtilsHelper.generateAvatar(req.getFirstName() + " " + req.getLastName()))
                 .password(encodedPassword)
                 .build();
