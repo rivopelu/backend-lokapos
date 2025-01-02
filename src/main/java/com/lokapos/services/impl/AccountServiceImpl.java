@@ -174,6 +174,8 @@ public class AccountServiceImpl implements AccountService {
                 ResponseListAccount responseListAccount = ResponseListAccount.builder()
                         .firstName(account.getFirstName())
                         .lastName(account.getLastName())
+                        .avatar(account.getAvatar())
+                        .createdDate(account.getCreatedDate())
                         .fullName(account.getFirstName() + " " + account.getLastName())
                         .role(account.getRole())
                         .email(account.getEmail())

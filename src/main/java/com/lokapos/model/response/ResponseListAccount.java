@@ -20,5 +20,7 @@ public class ResponseListAccount {
     private String lastName;
     private String fullName;
     private USER_ROLE_ENUM role;
+    private String avatar;
+    private Long createdDate;
     private String email;
 }
