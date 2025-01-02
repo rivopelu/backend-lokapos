@@ -5,7 +5,9 @@ import com.lokapos.entities.Business;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.NotAuthorizedException;
 import com.lokapos.model.request.ReqOtp;
+import com.lokapos.model.request.RequestCreateAccount;
 import com.lokapos.model.response.ResponseBusinessDetail;
+import com.lokapos.model.response.ResponseCreateAccount;
 import com.lokapos.model.response.ResponseGetMe;
 import com.lokapos.model.response.ResponseListAccount;
 import org.springframework.data.domain.Page;
@@ -28,4 +30,6 @@ public interface AccountService {
     Page<ResponseListAccount> getListAccountAdmin(Pageable pageable);
 
     String getCurrentBusinessIdOrNull();
+
+    ResponseCreateAccount createAccount(RequestCreateAccount req);
 }

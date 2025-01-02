@@ -2,6 +2,7 @@ package com.lokapos.controller;
 
 import com.lokapos.annotations.BaseController;
 import com.lokapos.model.request.ReqOtp;
+import com.lokapos.model.request.RequestCreateAccount;
 import com.lokapos.model.response.BaseResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -20,5 +21,8 @@ public interface AccountController {
 
     @GetMapping("v1/admin/account-list")
     BaseResponse getListAccountAdmin(Pageable pageable);
+
+    @PostMapping("v1/admin/create-account")
+    BaseResponse createAccount(@RequestBody RequestCreateAccount req);
 
 }

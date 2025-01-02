@@ -9,7 +9,9 @@ import com.lokapos.exception.NotAuthorizedException;
 import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqOtp;
+import com.lokapos.model.request.RequestCreateAccount;
 import com.lokapos.model.response.ResponseBusinessDetail;
+import com.lokapos.model.response.ResponseCreateAccount;
 import com.lokapos.model.response.ResponseGetMe;
 import com.lokapos.model.response.ResponseListAccount;
 import com.lokapos.repositories.*;
@@ -195,6 +197,18 @@ public class AccountServiceImpl implements AccountService {
                 businessId = account.getBusiness().getId();
             }
             return businessId;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseCreateAccount createAccount(RequestCreateAccount req) {
+        try {
+            return ResponseCreateAccount
+                    .builder()
+                    .password("HELLO WORLD")
+                    .build();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
