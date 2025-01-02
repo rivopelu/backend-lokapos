@@ -169,7 +169,7 @@ public class AccountServiceImpl implements AccountService {
         List<ResponseListAccount> responseListAccounts = new ArrayList<>();
 
         if (businessId != null) {
-            Page<Account> accountPage = accountRepository.findAllByBusinessIdAndActiveIsTrue(pageable, businessId);
+            Page<Account> accountPage = accountRepository.findAllByBusinessIdAndActiveIsTrueOrderByCreatedDateDesc(pageable, businessId);
             for (Account account : accountPage.getContent()) {
                 ResponseListAccount responseListAccount = ResponseListAccount.builder()
                         .firstName(account.getFirstName())

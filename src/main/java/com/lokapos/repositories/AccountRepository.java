@@ -12,5 +12,5 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     boolean existsByEmailAndActiveIsTrue(String email);
 
-    Page<Account> findAllByBusinessIdAndActiveIsTrue(Pageable pageable, String businessId);
+    Page<Account> findAllByBusinessIdAndActiveIsTrueOrderByCreatedDateDesc(Pageable pageable, String businessId);
 }
