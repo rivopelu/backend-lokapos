@@ -66,4 +66,25 @@ public class EmailServiceImpl implements EmailService {
             throw new SystemErrorException(e);
         }
     }
+
+    @Override
+    public void sendNewAccountRegistered(Account account, String password) {
+        MimeMessage message = emailSender.createMimeMessage();
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                    StandardCharsets.UTF_8.name());
+            Map<String, Object> model = new HashMap<>();
+            model.put("name", account.getFirstName() +  " " + account.getLastName());
+            model.put("password", password);
+            Template template = config.getTemplate("account-create.ftl");
+            String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+            helper.setFrom("noreply@rivopelu.com");
+            helper.setTo(account.getEmail());
+            helper.setSubject("Accont Created for lokapos");
+            helper.setText(html, true);
+            emailSender.send(message);
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
 }

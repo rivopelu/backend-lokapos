@@ -86,17 +86,19 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseSignIn signIn(RequestSignIn req) {
         Optional<Account> findAccount = accountRepository.findByEmailAndActiveIsTrue(req.getEmail());
-        if (findAccount.isEmpty()){
+//        TODO : cant login if role = staff
+        if (findAccount.isEmpty()) {
             throw new BadRequestException(RESPONSE_ENUM.SIGN_IN_FAILED.name());
         }
+
         Account account = findAccount.get();
-            return getSignIn(account, req.getPassword());
+        return getSignIn(account, req.getPassword());
     }
 
     private ResponseSignIn getSignIn(Account account, String password) {
         Authentication authentication;
         authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(account.getUsername(), password));
-        if(!authentication.isAuthenticated()){
+        if (!authentication.isAuthenticated()) {
             throw new BadRequestException(RESPONSE_ENUM.INVALID_CREDENTIAL.name());
         }
         try {

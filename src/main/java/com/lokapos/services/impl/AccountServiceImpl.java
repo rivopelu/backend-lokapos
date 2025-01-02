@@ -23,7 +23,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import utils.EntityUtils;
 import utils.UtilsHelper;
 
 import java.math.BigInteger;
@@ -42,6 +44,7 @@ public class AccountServiceImpl implements AccountService {
     private final ProvinceRepository provinceRepository;
     private final CityRepository cityRepository;
     private final DistrictRepository districtRepository;
+    private final PasswordEncoder passwordEncoder;
     private final SubDistrictRepository subDistrictRepository;
     private final AreaService areaService;
     private final BusinessRepository businessRepository;
@@ -204,10 +207,36 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ResponseCreateAccount createAccount(RequestCreateAccount req) {
+        Account account = getCurrentAccount();
+        String password = UtilsHelper.generateRandomPassword(8);
+
+        if (account.getBusiness() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
+        }
+
+        String encodedPassword = passwordEncoder.encode(password);
+        Account builderAccount = Account.builder()
+                .firstName(req.getFirstName())
+                .lastName(req.getLastName())
+                .isVerifiedEmail(true)
+                .role(req.getRole())
+                .email(req.getEmail())
+                .avatar(UtilsHelper.generateAvatar(req.getFirstName() + " " + req.getLastName()))
+                .password(encodedPassword)
+                .build();
+
+        EntityUtils.created(builderAccount, account.getId());
+        Account newAccount = accountRepository.save(builderAccount);
+        emailService.sendNewAccountRegistered(newAccount, password);
+
         try {
             return ResponseCreateAccount
                     .builder()
-                    .password("HELLO WORLD")
+                    .id(builderAccount.getId())
+                    .firstName(builderAccount.getFirstName())
+                    .lastName(builderAccount.getLastName())
+                    .avatar(builderAccount.getAvatar())
+                    .email(builderAccount.getEmail())
                     .build();
         } catch (Exception e) {
             throw new SystemErrorException(e);

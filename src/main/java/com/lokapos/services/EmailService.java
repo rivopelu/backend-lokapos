@@ -8,4 +8,5 @@ public interface EmailService {
 
     void SendingOtpSignUp(String otp, Account account);
 
+    void sendNewAccountRegistered(Account account, String password);
 }
