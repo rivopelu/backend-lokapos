@@ -2,6 +2,7 @@ package com.lokapos.services;
 
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.model.request.RequestCreateSubscriptionOrder;
+import com.lokapos.model.request.RequestCreateSubscriptionV2;
 import com.lokapos.model.request.RequestSubscriptionPackage;
 import com.lokapos.model.response.ResponseListSubscriptionOrder;
 import com.lokapos.model.response.ResponseSubscriptionPackage;
@@ -19,4 +20,6 @@ public interface SubscriptionService {
     SnapPaymentResponse orderSubscription(RequestCreateSubscriptionOrder req);
 
     Page<ResponseListSubscriptionOrder> getListOrderSubscriptions(Pageable pageable);
+
+    String orderSubscriptionV2(RequestCreateSubscriptionV2 req);
 }

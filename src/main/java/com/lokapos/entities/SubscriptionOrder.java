@@ -32,5 +32,10 @@ public class SubscriptionOrder extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private SUBSCRIPTION_ORDER_STATUS_ENUM status;
 
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private SUBSCRIPTION_ORDER_STATUS_ENUM paymentMethod;
 
+    @Column(name = "payment_code")
+    private String paymentCode;
 }

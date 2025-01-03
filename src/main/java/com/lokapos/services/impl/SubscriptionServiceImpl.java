@@ -11,6 +11,7 @@ import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqPaymentObject;
 import com.lokapos.model.request.RequestCreateSubscriptionOrder;
+import com.lokapos.model.request.RequestCreateSubscriptionV2;
 import com.lokapos.model.request.RequestSubscriptionPackage;
 import com.lokapos.model.response.ResponseListSubscriptionOrder;
 import com.lokapos.model.response.ResponseSubscriptionPackage;
@@ -155,5 +156,27 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    @Override
+    public String orderSubscriptionV2(RequestCreateSubscriptionV2 req) {
+        Account account = accountService.getCurrentAccount();
+        if(account.getBusiness() == null){
+            throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
+        }
+        SubscriptionPackage subscriptionPackage = subscriptionPackageRepository.findById(req.getPackageId()).orElseThrow(( )-> new NotFoundException(RESPONSE_ENUM.NOT_FOUND_OTP.name()));
+        SubscriptionOrder subscriptionOrder = SubscriptionOrder.builder()
+                .subscriptionPackage(subscriptionPackage)
+                .business(account.getBusiness())
+                .totalTransaction(subscriptionPackage.getPrice())
+                .status(SUBSCRIPTION_ORDER_STATUS_ENUM.PENDING)
+                .build();
+
+        try {
+            return "HELLLO";
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+
     }
 }
