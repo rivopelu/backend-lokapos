@@ -154,7 +154,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
-
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ResponseTransferPaymentMethodFromMidTrans> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, ResponseTransferPaymentMethodFromMidTrans.class);
         String vaNumber = Objects.requireNonNull(response.getBody()).getVa_numbers().getFirst().va_number;
