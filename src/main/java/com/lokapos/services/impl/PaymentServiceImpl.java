@@ -6,6 +6,7 @@ import com.lokapos.entities.TransactionNotificationSubscription;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.enums.SUBSCRIPTION_ORDER_STATUS_ENUM;
 import com.lokapos.exception.BadRequestException;
+import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqNotificationMidTrans;
 import com.lokapos.model.request.ReqPaymentObject;
@@ -157,7 +158,10 @@ public class PaymentServiceImpl implements PaymentService {
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ResponseTransferPaymentMethodFromMidTrans> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, ResponseTransferPaymentMethodFromMidTrans.class);
         String vaNumber = Objects.requireNonNull(response.getBody()).getVa_numbers().getFirst().va_number;
-        return vaNumber;
+        SubscriptionOrder subscriptionOrder = subscriptionOrderRepository.findById(req.getTransactionDetail().getOrderId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.ORDER_NOT_FOUND.name()));
+        subscriptionOrder.setPaymentCode(vaNumber);
+        subscriptionOrderRepository.save(subscriptionOrder);
+        return subscriptionOrder.getId()    ;
     }
 
     private static Long getALong(SubscriptionOrder subscriptionOrder, Business business) {
@@ -179,7 +183,6 @@ public class PaymentServiceImpl implements PaymentService {
         data.put("gross_amount", detail.getGrossAmount());
         return data;
     }
-
 
 
     private Map<String, Object> generateBankTransfer(ReqPaymentObject.BankTransfer detail) {
