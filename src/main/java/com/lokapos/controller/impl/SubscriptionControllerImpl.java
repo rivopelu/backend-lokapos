@@ -43,4 +43,9 @@ public class SubscriptionControllerImpl implements SubscriptionController {
     public BaseResponse orderSubscriptionV2(RequestCreateSubscriptionV2 req) {
         return ResponseHelper.createBaseResponse(subscriptionService.orderSubscriptionV2(req));
     }
+
+    @Override
+    public BaseResponse orderSubscriptionConfirmationPayment(String id) {
+        return ResponseHelper.createBaseResponse(subscriptionService.orderSubscriptionConfirmationPayment(id));
+    }
 }

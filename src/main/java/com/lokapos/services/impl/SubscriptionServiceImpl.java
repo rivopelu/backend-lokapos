@@ -14,6 +14,7 @@ import com.lokapos.model.request.ReqPaymentObject;
 import com.lokapos.model.request.RequestCreateSubscriptionOrder;
 import com.lokapos.model.request.RequestCreateSubscriptionV2;
 import com.lokapos.model.request.RequestSubscriptionPackage;
+import com.lokapos.model.response.ResponseConfirmationPayment;
 import com.lokapos.model.response.ResponseListSubscriptionOrder;
 import com.lokapos.model.response.ResponseSubscriptionPackage;
 import com.lokapos.model.response.SnapPaymentResponse;
@@ -185,5 +186,23 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new SystemErrorException(e);
         }
 
+    }
+
+    @Override
+    public ResponseConfirmationPayment orderSubscriptionConfirmationPayment(String id) {
+        SubscriptionOrder subscriptionOrder = subscriptionOrderRepository.findById(id).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.ORDER_NOT_FOUND.name()));
+
+        try {
+            return ResponseConfirmationPayment.builder()
+                    .paymentCode(subscriptionOrder.getPaymentCode())
+                    .paymentMethod(subscriptionOrder.getPaymentMethod())
+                    .paymentSubscriptionExpire(null)
+                    .orderId(subscriptionOrder.getId())
+                    .totalTransaction(subscriptionOrder.getTotalTransaction())
+                    .status(subscriptionOrder.getStatus())
+                    .build();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
     }
 }

@@ -8,6 +8,7 @@ import com.lokapos.model.request.RequestSubscriptionPackage;
 import com.lokapos.model.response.BaseResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -29,5 +30,8 @@ public interface SubscriptionController {
 
     @PostMapping("v2/order-subscription")
     BaseResponse orderSubscriptionV2(@RequestBody RequestCreateSubscriptionV2 req);
+
+    @GetMapping("v1/order-subscription/confirmation-payment/{id}")
+    BaseResponse orderSubscriptionConfirmationPayment(@PathVariable String id);
 
 }

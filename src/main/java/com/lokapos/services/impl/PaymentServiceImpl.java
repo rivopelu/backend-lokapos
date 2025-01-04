@@ -161,7 +161,7 @@ public class PaymentServiceImpl implements PaymentService {
         SubscriptionOrder subscriptionOrder = subscriptionOrderRepository.findById(req.getTransactionDetail().getOrderId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.ORDER_NOT_FOUND.name()));
         subscriptionOrder.setPaymentCode(vaNumber);
         subscriptionOrderRepository.save(subscriptionOrder);
-        return subscriptionOrder.getId()    ;
+        return subscriptionOrder.getId();
     }
 
     private static Long getALong(SubscriptionOrder subscriptionOrder, Business business) {
