@@ -4,6 +4,7 @@ import com.lokapos.entities.Account;
 import com.lokapos.entities.Business;
 import com.lokapos.entities.SubscriptionOrder;
 import com.lokapos.entities.SubscriptionPackage;
+import com.lokapos.enums.PAYMENT_METHOD_TYPE_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.enums.SUBSCRIPTION_ORDER_STATUS_ENUM;
 import com.lokapos.exception.BadRequestException;
@@ -161,19 +162,22 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     public String orderSubscriptionV2(RequestCreateSubscriptionV2 req) {
         Account account = accountService.getCurrentAccount();
-        if(account.getBusiness() == null){
+        if (account.getBusiness() == null) {
             throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
         }
-        SubscriptionPackage subscriptionPackage = subscriptionPackageRepository.findById(req.getPackageId()).orElseThrow(( )-> new NotFoundException(RESPONSE_ENUM.NOT_FOUND_OTP.name()));
-        SubscriptionOrder subscriptionOrder = SubscriptionOrder.builder()
-                .subscriptionPackage(subscriptionPackage)
-                .business(account.getBusiness())
-                .totalTransaction(subscriptionPackage.getPrice())
-                .status(SUBSCRIPTION_ORDER_STATUS_ENUM.PENDING)
-                .build();
+        SubscriptionPackage subscriptionPackage = subscriptionPackageRepository.findById(req.getPackageId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.NOT_FOUND_OTP.name()));
 
         try {
-            return "HELLLO";
+            SubscriptionOrder subscriptionOrder = SubscriptionOrder.builder()
+                    .subscriptionPackage(subscriptionPackage)
+                    .business(account.getBusiness())
+                    .totalTransaction(subscriptionPackage.getPrice())
+                    .status(SUBSCRIPTION_ORDER_STATUS_ENUM.PENDING)
+                    .paymentMethod(req.getMethod())
+                    .build();
+            EntityUtils.created(subscriptionOrder, account.getId());
+            subscriptionOrderRepository.save(subscriptionOrder);
+            return "SUCCESS";
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

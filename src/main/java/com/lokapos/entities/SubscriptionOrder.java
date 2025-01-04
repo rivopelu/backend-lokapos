@@ -1,6 +1,7 @@
 package com.lokapos.entities;
 
 
+import com.lokapos.enums.PAYMENT_METHOD_TYPE_ENUM;
 import com.lokapos.enums.SUBSCRIPTION_ORDER_STATUS_ENUM;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,7 +35,7 @@ public class SubscriptionOrder extends BaseEntity {
 
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
-    private SUBSCRIPTION_ORDER_STATUS_ENUM paymentMethod;
+    private PAYMENT_METHOD_TYPE_ENUM  paymentMethod;
 
     @Column(name = "payment_code")
     private String paymentCode;
