@@ -22,10 +22,6 @@ public class PaymentRequestUtils {
             case BANK_TRANSFER_BNI -> {
                 return parseBankTransferString(order, account, subscriptionPackage, business, "bni");
             }
-
-            case BANK_TRANSFER_MANDIRI, BANK_TRANSFER_PERMATA, BANK_TRANSFER_CIMB -> {
-                return null;
-            }
             default -> {
                 return null;
             }
@@ -36,7 +32,7 @@ public class PaymentRequestUtils {
     private static ReqPaymentObject parseBankTransferString(SubscriptionOrder order, Account account, SubscriptionPackage subscriptionPackage, Business business, String bank) {
         ReqPaymentObject generateBuilder = generateTransactionDetail(order, account, subscriptionPackage, business);
         ReqPaymentObject.BankTransfer bankTransfer = ReqPaymentObject.BankTransfer.builder()
-                .bankName("bca")
+                .bankName(bank)
                 .build();
 
         generateBuilder.setBankTransfer(bankTransfer);
