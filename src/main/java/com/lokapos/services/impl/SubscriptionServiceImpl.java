@@ -180,8 +180,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             EntityUtils.created(subscriptionOrder, account.getId());
             subscriptionOrder = subscriptionOrderRepository.save(subscriptionOrder);
             ReqPaymentObject reqPaymentObject = PaymentRequestUtils.parseRequestPayment(subscriptionOrder, account, subscriptionPackage, account.getBusiness());
-            String va = paymentService.createPaymentCustomInterface(reqPaymentObject);
-            return va;
+            return paymentService.createPaymentCustomInterface(reqPaymentObject);
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

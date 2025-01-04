@@ -12,13 +12,38 @@ import java.math.BigInteger;
 public class PaymentRequestUtils {
 
     public static ReqPaymentObject parseRequestPayment(SubscriptionOrder order, Account account, SubscriptionPackage subscriptionPackage, Business business) {
-        if (order.getPaymentMethod().equals(PAYMENT_METHOD_TYPE_ENUM.BANK_TRANSFER_BCA)) {
-            return parseBankTransferBca(order, account, subscriptionPackage, business);
+        switch (order.getPaymentMethod()) {
+            case BANK_TRANSFER_BCA -> {
+                return parseBankTransferString(order, account, subscriptionPackage, business, "bca");
+            }
+            case BANK_TRANSFER_BRI -> {
+                return parseBankTransferString(order, account, subscriptionPackage, business, "bri");
+            }
+            case BANK_TRANSFER_BNI -> {
+                return parseBankTransferString(order, account, subscriptionPackage, business, "bni");
+            }
+
+            case BANK_TRANSFER_MANDIRI, BANK_TRANSFER_PERMATA, BANK_TRANSFER_CIMB -> {
+                return null;
+            }
+            default -> {
+                return null;
+            }
         }
-        return null;
+
     }
 
-    private static ReqPaymentObject parseBankTransferBca(SubscriptionOrder order, Account account, SubscriptionPackage subscriptionPackage, Business business) {
+    private static ReqPaymentObject parseBankTransferString(SubscriptionOrder order, Account account, SubscriptionPackage subscriptionPackage, Business business, String bank) {
+        ReqPaymentObject generateBuilder = generateTransactionDetail(order, account, subscriptionPackage, business);
+        ReqPaymentObject.BankTransfer bankTransfer = ReqPaymentObject.BankTransfer.builder()
+                .bankName("bca")
+                .build();
+
+        generateBuilder.setBankTransfer(bankTransfer);
+        return generateBuilder;
+    }
+
+    private static ReqPaymentObject generateTransactionDetail(SubscriptionOrder order, Account account, SubscriptionPackage subscriptionPackage, Business business) {
         ReqPaymentObject.TransactionDetail transactionDetail = ReqPaymentObject.TransactionDetail.builder()
                 .orderId(order.getId())
                 .grossAmount(subscriptionPackage.getPrice())
@@ -33,17 +58,10 @@ public class PaymentRequestUtils {
                 .firstName(business.getBusinessName())
                 .email(account.getId())
                 .build();
-
-        ReqPaymentObject.BankTransfer bankTransfer = ReqPaymentObject.BankTransfer.builder()
-                .bankName("bca")
-                .build();
-        ReqPaymentObject reqPaymentObject = ReqPaymentObject.builder()
+        return ReqPaymentObject.builder()
                 .transactionDetail(transactionDetail)
                 .itemsDetail(itemsDetail)
                 .customersDetails(customersDetails)
-                .bankTransfer(bankTransfer)
                 .build();
-
-        return reqPaymentObject;
     }
 }
