@@ -9,6 +9,7 @@ import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqNotificationMidTrans;
 import com.lokapos.model.request.ReqPaymentObject;
+import com.lokapos.model.response.ResponseTransferPaymentMethodFromMidTrans;
 import com.lokapos.model.response.SnapPaymentResponse;
 import com.lokapos.repositories.BusinessRepository;
 import com.lokapos.repositories.SubscriptionOrderRepository;
@@ -27,6 +28,7 @@ import utils.EntityUtils;
 import java.math.BigInteger;
 import java.util.*;
 
+import static utils.UrlString.CHARGE_API_PAYMENT;
 import static utils.UrlString.GET_PAYMENT_SNAP_MID_TRANS_URL;
 
 @Service
@@ -40,11 +42,14 @@ public class PaymentServiceImpl implements PaymentService {
     private String mtServerKey;
 
     @Value("${mt.api-url}")
+    private String mtUrl;
+
+    @Value("${mt.mt-api-url}")
     private String mtApiUrl;
 
     @Override
     public SnapPaymentResponse createPayment(ReqPaymentObject req) {
-        String url = mtApiUrl + GET_PAYMENT_SNAP_MID_TRANS_URL;
+        String url = mtUrl + GET_PAYMENT_SNAP_MID_TRANS_URL;
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
@@ -56,6 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         body.put("transaction_details", generateTransactionDetail(req.getTransactionDetail()));
         body.put("item_detail", generateItemsDetail(req.getItemsDetail()));
+        body.put("payment_type", generateItemsDetail(req.getItemsDetail()));
 //        body.put("customer_details", generateCustomersDetail(req.getCustomersDetails()));
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
@@ -128,6 +134,33 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Override
+    public String createPaymentCustomInterface(ReqPaymentObject req) {
+        String url = mtApiUrl + CHARGE_API_PAYMENT;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        String authString = mtServerKey + ":";
+        String encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes());
+        headers.set("Authorization", "Basic " + encodedAuthString);
+
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("transaction_details", generateTransactionDetail(req.getTransactionDetail()));
+        body.put("item_detail", generateItemsDetail(req.getItemsDetail()));
+        body.put("bank_transfer", generateBankTransfer(req.getBankTransfer()));
+        body.put("payment_type", "bank_transfer");
+//        body.put("customer_details", generateCustomersDetail(req.getCustomersDetails()));
+
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<ResponseTransferPaymentMethodFromMidTrans> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, ResponseTransferPaymentMethodFromMidTrans.class);
+        String vaNumber = Objects.requireNonNull(response.getBody()).getVa_numbers().getFirst().va_number;
+        return vaNumber;
+    }
+
     private static Long getALong(SubscriptionOrder subscriptionOrder, Business business) {
         BigInteger subscriptionDurationPerDay = subscriptionOrder.getSubscriptionPackage().getDurationPerDay();
         long currentExpiredDate = new Date().getTime();
@@ -145,6 +178,14 @@ public class PaymentServiceImpl implements PaymentService {
         Map<String, Object> data = new HashMap<>();
         data.put("order_id", detail.getOrderId());
         data.put("gross_amount", detail.getGrossAmount());
+        return data;
+    }
+
+
+
+    private Map<String, Object> generateBankTransfer(ReqPaymentObject.BankTransfer detail) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("bank", detail.getBankName());
         return data;
     }
 

@@ -21,6 +21,7 @@ public class ReqPaymentObject {
     private TransactionDetail transactionDetail;
     private ItemsDetail itemsDetail;
     private CustomersDetails customersDetails;
+    private BankTransfer bankTransfer;
 
 
     @Data
@@ -58,6 +59,17 @@ public class ReqPaymentObject {
     public static class CustomersDetails {
         private String firstName;
         private String email;
+    }
+
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonSerialize
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class BankTransfer {
+        private String bankName;
     }
 
 }

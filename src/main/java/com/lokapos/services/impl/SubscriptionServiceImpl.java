@@ -28,6 +28,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import utils.EntityUtils;
+import utils.PaymentRequestUtils;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -176,8 +177,10 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                     .paymentMethod(req.getMethod())
                     .build();
             EntityUtils.created(subscriptionOrder, account.getId());
-            subscriptionOrderRepository.save(subscriptionOrder);
-            return "SUCCESS";
+            subscriptionOrder = subscriptionOrderRepository.save(subscriptionOrder);
+            ReqPaymentObject reqPaymentObject = PaymentRequestUtils.parseRequestPayment(subscriptionOrder, account, subscriptionPackage, account.getBusiness());
+            String va = paymentService.createPaymentCustomInterface(reqPaymentObject);
+            return va;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

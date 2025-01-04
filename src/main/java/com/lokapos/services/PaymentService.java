@@ -10,4 +10,6 @@ public interface PaymentService {
     SnapPaymentResponse createPayment(ReqPaymentObject req);
 
     String postNotificationFromMidTrans(ReqNotificationMidTrans req);
+
+    String createPaymentCustomInterface(ReqPaymentObject reqPaymentObject);
 }

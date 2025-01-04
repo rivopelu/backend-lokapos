@@ -18,4 +18,5 @@ import lombok.NoArgsConstructor;
 public class SnapPaymentResponse {
     private String token;
     private String redirectUrl;
+    private String transaction_status;
 }
