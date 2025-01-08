@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.7.1" author="rivo pelu">
+        <createTable tableName="menu_order">
+            <!--            BASE ENTITY START-->
+            <column name="id" type="varchar(255)">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="active" type="int(1)" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(255)" defaultValue="SYSTEM">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="long">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deleted_date" type="long">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_date" type="long">
+                <constraints nullable="true"/>
+            </column>
+            <!--            BASE ENTITY END-->
+            <column name="menu_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price_per_qty" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="total_price" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="note" type="text">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="menu_order"
+                baseColumnNames="menu_id"
+                constraintName="menu_order_to_menu_fk"
+                referencedTableName="serving_menu"
+                referencedColumnNames="id"
+        />
+        <addForeignKeyConstraint
+                baseTableName="menu_order"
+                baseColumnNames="order_id"
+                constraintName="menu_order_to_order_fk"
+                referencedTableName="order"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+</databaseChangeLog>
