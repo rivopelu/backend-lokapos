@@ -8,7 +8,7 @@ import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateOrder;
 import com.lokapos.repositories.MenuOrderRepository;
-import com.lokapos.repositories.OrderRepository;
+import com.lokapos.repositories.ServingOrderRepository;
 import com.lokapos.repositories.ServingMenuRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.OrderService;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderRepository orderRepository;
+    private final ServingOrderRepository servingOrderRepository;
     private final AccountService accountService;
     private final ServingMenuRepository servingMenuRepository;
     private final MenuOrderRepository menuOrderRepository;
@@ -35,10 +35,8 @@ public class OrderServiceImpl implements OrderService {
             ServingOrder servingOrderBuilder = ServingOrder.builder()
                     .status(ORDER_STATUS_ENUM.PENDING)
                     .paymentMethod(req.getPaymentMethod())
-                    .totalTransaction(BigInteger.valueOf(0))
                     .build();
-            EntityUtils.created(servingOrderBuilder, accountService.getCurrentAccountId());
-            orderRepository.save(servingOrderBuilder);
+
             List<MenuOrder> menuOrderList = buildMenuOrders(req.getMenuList(), servingOrderBuilder);
             return RESPONSE_ENUM.SUCCESS.name();
         } catch (Exception e) {
@@ -63,17 +61,20 @@ public class OrderServiceImpl implements OrderService {
                         .quantity(listMenu.getQuantity())
                         .note(listMenu.getNote())
                         .pricePerQty(servingMenu.getPrice())
-                        .totalPrice(totalTransaction)
+                        .totalPrice(totalPrice)
                         .build();
                 index = index + 1;
-                totalTransaction.add(totalPrice);
+                BigInteger calclateTotal = totalTransaction.add(totalPrice);
+                totalTransaction = calclateTotal;
                 menuOrders.add(menuOrder);
                 EntityUtils.created(menuOrder, accountService.getCurrentAccountId());
 
             }
 
 
-
+            EntityUtils.created(servingOrder, accountService.getCurrentAccountId());
+            servingOrder.setTotalTransaction(totalTransaction);
+            servingOrderRepository.save(servingOrder);
             menuOrderRepository.saveAll(menuOrders);
             return menuOrders;
         } catch (Exception e) {
