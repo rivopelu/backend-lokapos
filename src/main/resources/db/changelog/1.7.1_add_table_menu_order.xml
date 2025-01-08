@@ -35,7 +35,7 @@
             <column name="menu_id" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="order_id" type="varchar(255)">
+            <column name="serving_order_id" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="price_per_qty" type="bigint">
