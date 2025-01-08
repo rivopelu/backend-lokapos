@@ -10,4 +10,6 @@ public interface AuthService {
     String signUp(RequestSignUp req);
 
     ResponseSignIn signIn(RequestSignIn req);
+
+    ResponseSignIn posSignIn(RequestSignIn req);
 }

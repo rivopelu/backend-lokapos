@@ -95,6 +95,17 @@ public class AuthServiceImpl implements AuthService {
         return getSignIn(account, req.getPassword());
     }
 
+    @Override
+    public ResponseSignIn posSignIn(RequestSignIn req) {
+        Account account = accountRepository.findByEmailAndActiveIsTrue(req.getEmail()).orElseThrow(() -> new BadRequestException(RESPONSE_ENUM.SIGN_IN_FAILED.name()));
+        try {
+            return getSignIn(account, req.getPassword());
+        }catch (Exception e){
+            throw new SystemErrorException(e);
+        }
+
+    }
+
     private ResponseSignIn getSignIn(Account account, String password) {
         Authentication authentication;
         authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(account.getUsername(), password));

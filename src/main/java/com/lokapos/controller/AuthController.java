@@ -23,4 +23,7 @@ public interface AuthController {
     @PostMapping("v1/sign-in")
     BaseResponse signIn(@RequestBody RequestSignIn req);
 
+    @PostMapping("v1/pos/sign-in")
+    BaseResponse posSignIn(@RequestBody RequestSignIn req);
+
 }
