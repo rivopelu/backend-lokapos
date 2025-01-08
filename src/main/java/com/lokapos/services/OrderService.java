@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface OrderService {
 
-    String createOrder(List<RequestCreateOrder> req);
+    String createOrder(RequestCreateOrder req);
 
 }

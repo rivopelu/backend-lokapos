@@ -5,7 +5,7 @@
                    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="1.7.0" author="rivo pelu">
-        <createTable tableName="order">
+        <createTable tableName="serving_order">
             <!--            BASE ENTITY START-->
             <column name="id" type="varchar(255)">
                 <constraints nullable="false" primaryKey="true" unique="true"/>

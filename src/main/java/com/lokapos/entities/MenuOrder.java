@@ -16,14 +16,14 @@ import java.math.BigInteger;
 public class MenuOrder extends BaseEntity {
     @JoinColumn(name = "menu_id")
     @ManyToOne
-    private ServingMenu menuId;
+    private ServingMenu menu;
 
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "serving_order_id")
     @ManyToOne
-    private Order order;
+    private ServingOrder servingOrder;
 
     @Column(name = "quantity")
-    private String quantity;
+    private BigInteger quantity;
 
     @Column(name = "price_per_qty")
     private BigInteger pricePerQty;

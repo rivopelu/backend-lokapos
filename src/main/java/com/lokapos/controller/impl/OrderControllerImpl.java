@@ -17,7 +17,7 @@ public class OrderControllerImpl implements OrderController {
     private final OrderService orderService;
 
     @Override
-    public BaseResponse createOrder(List<RequestCreateOrder> req) {
+    public BaseResponse createOrder(RequestCreateOrder req) {
         return ResponseHelper.createBaseResponse(orderService.createOrder(req));
     }
 

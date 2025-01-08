@@ -27,5 +27,4 @@
     <include file="classpath:db/changelog/1.6.1_add_table_serving_menu.xml"/>
     <include file="classpath:db/changelog/1.6.2_add_column_payment_method_order_subscription.xml"/>
     <include file="classpath:db/changelog/1.7.0_add_table_order.xml"/>
-    <include file="classpath:db/changelog/1.7.1_add_table_menu_order.xml"/>
 </databaseChangeLog>

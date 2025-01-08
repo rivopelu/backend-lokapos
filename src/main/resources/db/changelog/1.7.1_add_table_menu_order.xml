@@ -41,6 +41,9 @@
             <column name="price_per_qty" type="bigint">
                 <constraints nullable="false"/>
             </column>
+            <column name="quantity" type="bigint">
+                <constraints nullable="false"/>
+            </column>
             <column name="total_price" type="bigint">
                 <constraints nullable="false"/>
             </column>
@@ -57,9 +60,9 @@
         />
         <addForeignKeyConstraint
                 baseTableName="menu_order"
-                baseColumnNames="order_id"
+                baseColumnNames="serving_order_id"
                 constraintName="menu_order_to_order_fk"
-                referencedTableName="order"
+                referencedTableName="serving_order"
                 referencedColumnNames="id"
         />
     </changeSet>

@@ -1,6 +1,7 @@
 package com.lokapos.entities;
 
 
+import com.lokapos.enums.ORDER_PAYMENT_METHOD_ENUM;
 import com.lokapos.enums.ORDER_STATUS_ENUM;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,8 +14,8 @@ import java.math.BigInteger;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "order")
-public class Order extends BaseEntity {
+@Table(name = "serving_order")
+public class ServingOrder extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -24,7 +25,8 @@ public class Order extends BaseEntity {
     private BigInteger totalTransaction;
 
     @Column(name = "payment_method")
-    private String paymentMethod;
+    @Enumerated(EnumType.STRING)
+    private ORDER_PAYMENT_METHOD_ENUM paymentMethod;
 
 
 }
