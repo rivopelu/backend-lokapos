@@ -1,6 +1,7 @@
 package com.lokapos.services.impl;
 
 import com.lokapos.entities.*;
+import com.lokapos.enums.ORDER_PAYMENT_STATUS_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.enums.SUBSCRIPTION_ORDER_STATUS_ENUM;
 import com.lokapos.exception.BadRequestException;
@@ -8,13 +9,11 @@ import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqNotificationMidTrans;
 import com.lokapos.model.request.ReqPaymentObject;
+import com.lokapos.model.response.ResponseCheckStatusGopayMidTrans;
 import com.lokapos.model.response.ResponseCreateTransactionQris;
 import com.lokapos.model.response.ResponseTransferPaymentMethodFromMidTrans;
 import com.lokapos.model.response.SnapPaymentResponse;
-import com.lokapos.repositories.BusinessRepository;
-import com.lokapos.repositories.PaymentActionRepository;
-import com.lokapos.repositories.SubscriptionOrderRepository;
-import com.lokapos.repositories.TransactionNotificationSubscriptionRepository;
+import com.lokapos.repositories.*;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.PaymentService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final TransactionNotificationSubscriptionRepository transactionNotificationSubscriptionRepository;
     private final AccountService accountService;
     private final PaymentActionRepository paymentActionRepository;
+    private final ServingOrderRepository servingOrderRepository;
 
     @Value("${mt.server-key}")
     private String mtServerKey;
@@ -55,13 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public SnapPaymentResponse createPayment(ReqPaymentObject req) {
         String url = mtUrl + GET_PAYMENT_SNAP_MID_TRANS_URL;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        String authString = mtServerKey + ":";
-        String encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes());
-        headers.set("Authorization", "Basic " + encodedAuthString);
-
+        HttpHeaders headers = generateHeaderMidTrans();
         Map<String, Object> body = new HashMap<>();
 
         body.put("transaction_details", generateTransactionDetail(req.getTransactionDetail()));
@@ -143,12 +137,7 @@ public class PaymentServiceImpl implements PaymentService {
     public String createPaymentCustomInterface(ReqPaymentObject req) {
         String url = mtApiUrl + CHARGE_API_PAYMENT;
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Content-Type", "application/json");
-        String authString = mtServerKey + ":";
-        String encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes());
-        headers.set("Authorization", "Basic " + encodedAuthString);
-
+        HttpHeaders headers = generateHeaderMidTrans();
         Map<String, Object> body = new HashMap<>();
 
         body.put("transaction_details", generateTransactionDetail(req.getTransactionDetail()));
@@ -172,11 +161,6 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             String url = mtApiUrl + CHARGE_API_PAYMENT;
             String currentAccountId = accountService.getCurrentAccountId();
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/json");
-            String authString = mtServerKey + ":";
-            String encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes());
-            headers.set("Authorization", "Basic " + encodedAuthString);
 
             Map<String, Object> body = new HashMap<>();
 
@@ -187,7 +171,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             body.put("transaction_details", generateTransactionDetail(transactionDetail));
             body.put("payment_type", "gopay");
-
+            HttpHeaders headers = generateHeaderMidTrans();
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
             RestTemplate restTemplate = new RestTemplate();
@@ -212,6 +196,30 @@ public class PaymentServiceImpl implements PaymentService {
             paymentActionRepository.saveAll(paymentActions);
             PaymentAction paymentAction = paymentActions.get(0);
             return paymentAction.getUrl();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ORDER_PAYMENT_STATUS_ENUM checkStatusOrder(String orderId) {
+        try {
+            HttpHeaders headers = generateHeaderMidTrans();
+            ServingOrder servingOrder = servingOrderRepository.findById(orderId).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.ORDER_NOT_FOUND.name()));
+            PaymentAction paymentAction = paymentActionRepository.findByServingOrderIdAndName(orderId, "get-status").orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.ORDER_NOT_FOUND.name()));
+
+            HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(null, headers);
+            ORDER_PAYMENT_STATUS_ENUM status = ORDER_PAYMENT_STATUS_ENUM.PENDING;
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<ResponseCheckStatusGopayMidTrans> response = restTemplate.exchange(paymentAction.getUrl(), HttpMethod.GET, requestEntity, ResponseCheckStatusGopayMidTrans.class);
+            if (response.getBody() != null) {
+                if (response.getBody().getTransactionStatus().equals("settlement")) {
+                    servingOrder.setPaymentStatus(ORDER_PAYMENT_STATUS_ENUM.SUCCESS);
+                    status = ORDER_PAYMENT_STATUS_ENUM.SUCCESS;
+                    servingOrderRepository.save(servingOrder);
+                }
+            }
+            return status;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
@@ -263,5 +271,14 @@ public class PaymentServiceImpl implements PaymentService {
         customerDetails.put("first_name", detail.getFirstName());
         customerDetails.put("email", detail.getEmail());
         return customerDetails;
+    }
+
+    private HttpHeaders generateHeaderMidTrans() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Type", "application/json");
+        String authString = mtServerKey + ":";
+        String encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes());
+        headers.set("Authorization", "Basic " + encodedAuthString);
+        return headers;
     }
 }

@@ -9,6 +9,7 @@ import com.lokapos.enums.ORDER_STATUS_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateOrder;
+import com.lokapos.model.response.ResponseCheckOrderPaymentStatus;
 import com.lokapos.model.response.ResponseCreateOrder;
 import com.lokapos.repositories.MenuOrderRepository;
 import com.lokapos.repositories.ServingOrderRepository;
@@ -59,8 +60,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Object> checkStatus(String orderId) {
-        return List.of();
+    public ResponseCheckOrderPaymentStatus checkStatus(String orderId) {
+       ORDER_PAYMENT_STATUS_ENUM orderPaymentStatusEnum =  paymentService.checkStatusOrder(orderId);
+
+        return ResponseCheckOrderPaymentStatus.builder()
+                .paymentStatus(orderPaymentStatusEnum)
+                .build();
     }
 
     private ServingOrder buildMenuOrders(List<RequestCreateOrder.ListMenu> listMenus, ServingOrder servingOrder) {
