@@ -12,6 +12,7 @@ import com.lokapos.model.response.ResponseCreateTransactionQris;
 import com.lokapos.model.response.ResponseTransferPaymentMethodFromMidTrans;
 import com.lokapos.model.response.SnapPaymentResponse;
 import com.lokapos.repositories.BusinessRepository;
+import com.lokapos.repositories.PaymentActionRepository;
 import com.lokapos.repositories.SubscriptionOrderRepository;
 import com.lokapos.repositories.TransactionNotificationSubscriptionRepository;
 import com.lokapos.services.AccountService;
@@ -27,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import utils.EntityUtils;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static utils.UrlString.CHARGE_API_PAYMENT;
@@ -39,6 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final BusinessRepository businessRepository;
     private final TransactionNotificationSubscriptionRepository transactionNotificationSubscriptionRepository;
     private final AccountService accountService;
+    private final PaymentActionRepository paymentActionRepository;
 
     @Value("${mt.server-key}")
     private String mtServerKey;
@@ -192,16 +195,21 @@ public class PaymentServiceImpl implements PaymentService {
             List<ResponseCreateTransactionQris.Actions> listAction = Objects.requireNonNull(response.getBody()).getActions();
             List<PaymentAction> paymentActions = new ArrayList<>();
             for (ResponseCreateTransactionQris.Actions action : listAction) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = formatter.parse(response.getBody().getTransactionTime());
+
                 PaymentAction paymentAction = PaymentAction.builder()
                         .servingOrder(order)
                         .name(action.getName())
                         .method(action.getMethod())
                         .url(action.getUrl())
-                        .expireTime(response.getBody().getExpiryTime().getTime())
+                        .expireTime(date.getTime())
                         .build();
                 EntityUtils.created(paymentAction, currentAccountId);
+
                 paymentActions.add(paymentAction);
             }
+            paymentActionRepository.saveAll(paymentActions);
             PaymentAction paymentAction = paymentActions.get(0);
             return paymentAction.getUrl();
         } catch (Exception e) {

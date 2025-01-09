@@ -31,7 +31,7 @@ public class ResponseCreateTransactionQris {
     public String transactionStatus;
     public String fraudStatus;
     public List<Actions> actions;
-    public Date expiryTime;
+    public String expiryTime;
 
     @Data
     @Builder

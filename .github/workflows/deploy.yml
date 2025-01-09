@@ -2,7 +2,7 @@ name: DEPLOY STAGING
 
 on:
   push:
-    branches: [ "development" ]
+    branches: [ "-" ]
 
 jobs:
   build:

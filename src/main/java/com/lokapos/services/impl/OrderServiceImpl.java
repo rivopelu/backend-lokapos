@@ -8,6 +8,7 @@ import com.lokapos.enums.ORDER_STATUS_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateOrder;
+import com.lokapos.model.response.ResponseCreateOrder;
 import com.lokapos.repositories.MenuOrderRepository;
 import com.lokapos.repositories.ServingOrderRepository;
 import com.lokapos.repositories.ServingMenuRepository;
@@ -33,7 +34,7 @@ public class OrderServiceImpl implements OrderService {
     private final PaymentService paymentService;
 
     @Override
-    public String createOrder(RequestCreateOrder req) {
+    public ResponseCreateOrder createOrder(RequestCreateOrder req) {
         try {
             ServingOrder servingOrderBuilder = ServingOrder.builder()
                     .status(ORDER_STATUS_ENUM.PENDING)
@@ -45,7 +46,10 @@ public class OrderServiceImpl implements OrderService {
             if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.QRIS)) {
                 qrisUrl = paymentService.createPaymentUsingEWallet(servingOrder);
             }
-            return qrisUrl;
+            return ResponseCreateOrder.builder()
+                    .qrisUrl(qrisUrl)
+                    .paymentMethod(req.getPaymentMethod())
+                    .build();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
