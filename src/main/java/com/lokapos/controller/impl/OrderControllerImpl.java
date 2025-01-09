@@ -21,4 +21,9 @@ public class OrderControllerImpl implements OrderController {
         return ResponseHelper.createBaseResponse(orderService.createOrder(req));
     }
 
+    @Override
+    public BaseResponse checkStatus(String orderId) {
+        return ResponseHelper.createBaseResponse(orderService.checkStatus(orderId));
+    }
+
 }

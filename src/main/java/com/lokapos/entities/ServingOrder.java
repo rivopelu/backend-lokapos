@@ -2,6 +2,7 @@ package com.lokapos.entities;
 
 
 import com.lokapos.enums.ORDER_PAYMENT_METHOD_ENUM;
+import com.lokapos.enums.ORDER_PAYMENT_STATUS_ENUM;
 import com.lokapos.enums.ORDER_STATUS_ENUM;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,6 +28,10 @@ public class ServingOrder extends BaseEntity {
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private ORDER_PAYMENT_METHOD_ENUM paymentMethod;
+
+    @Column(name = "payment_status")
+    @Enumerated(EnumType.STRING)
+    private ORDER_PAYMENT_STATUS_ENUM paymentStatus;
 
 
 }

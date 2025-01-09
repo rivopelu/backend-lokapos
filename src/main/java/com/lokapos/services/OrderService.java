@@ -9,4 +9,5 @@ public interface OrderService {
 
     ResponseCreateOrder createOrder(RequestCreateOrder req);
 
+    List<Object> checkStatus(String orderId);
 }

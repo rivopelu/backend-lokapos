@@ -4,6 +4,7 @@ import com.lokapos.entities.MenuOrder;
 import com.lokapos.entities.ServingOrder;
 import com.lokapos.entities.ServingMenu;
 import com.lokapos.enums.ORDER_PAYMENT_METHOD_ENUM;
+import com.lokapos.enums.ORDER_PAYMENT_STATUS_ENUM;
 import com.lokapos.enums.ORDER_STATUS_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.SystemErrorException;
@@ -38,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             ServingOrder servingOrderBuilder = ServingOrder.builder()
                     .status(ORDER_STATUS_ENUM.PENDING)
+                    .paymentStatus(ORDER_PAYMENT_STATUS_ENUM.PENDING)
                     .paymentMethod(req.getPaymentMethod())
                     .build();
 
@@ -48,11 +50,17 @@ public class OrderServiceImpl implements OrderService {
             }
             return ResponseCreateOrder.builder()
                     .qrisUrl(qrisUrl)
+                    .orderId(servingOrder.getId())
                     .paymentMethod(req.getPaymentMethod())
                     .build();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    @Override
+    public List<Object> checkStatus(String orderId) {
+        return List.of();
     }
 
     private ServingOrder buildMenuOrders(List<RequestCreateOrder.ListMenu> listMenus, ServingOrder servingOrder) {

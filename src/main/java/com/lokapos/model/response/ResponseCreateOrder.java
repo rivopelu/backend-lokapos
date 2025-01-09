@@ -17,5 +17,6 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ResponseCreateOrder {
     private String qrisUrl;
+    private String orderId;
     private ORDER_PAYMENT_METHOD_ENUM paymentMethod;
 }
