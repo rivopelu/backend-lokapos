@@ -1,8 +1,6 @@
 package com.lokapos.services.impl;
 
-import com.lokapos.entities.Business;
-import com.lokapos.entities.SubscriptionOrder;
-import com.lokapos.entities.TransactionNotificationSubscription;
+import com.lokapos.entities.*;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.enums.SUBSCRIPTION_ORDER_STATUS_ENUM;
 import com.lokapos.exception.BadRequestException;
@@ -10,11 +8,13 @@ import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqNotificationMidTrans;
 import com.lokapos.model.request.ReqPaymentObject;
+import com.lokapos.model.response.ResponseCreateTransactionQris;
 import com.lokapos.model.response.ResponseTransferPaymentMethodFromMidTrans;
 import com.lokapos.model.response.SnapPaymentResponse;
 import com.lokapos.repositories.BusinessRepository;
 import com.lokapos.repositories.SubscriptionOrderRepository;
 import com.lokapos.repositories.TransactionNotificationSubscriptionRepository;
+import com.lokapos.services.AccountService;
 import com.lokapos.services.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final SubscriptionOrderRepository subscriptionOrderRepository;
     private final BusinessRepository businessRepository;
     private final TransactionNotificationSubscriptionRepository transactionNotificationSubscriptionRepository;
+    private final AccountService accountService;
 
     @Value("${mt.server-key}")
     private String mtServerKey;
@@ -151,7 +152,6 @@ public class PaymentServiceImpl implements PaymentService {
         body.put("item_detail", generateItemsDetail(req.getItemsDetail()));
         body.put("bank_transfer", generateBankTransfer(req.getBankTransfer()));
         body.put("payment_type", "bank_transfer");
-//        body.put("customer_details", generateCustomersDetail(req.getCustomersDetails()));
 
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
 
@@ -162,6 +162,51 @@ public class PaymentServiceImpl implements PaymentService {
         subscriptionOrder.setPaymentCode(vaNumber);
         subscriptionOrderRepository.save(subscriptionOrder);
         return subscriptionOrder.getId();
+    }
+
+    @Override
+    public String createPaymentUsingEWallet(ServingOrder order) {
+        try {
+            String url = mtApiUrl + CHARGE_API_PAYMENT;
+            String currentAccountId = accountService.getCurrentAccountId();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/json");
+            String authString = mtServerKey + ":";
+            String encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes());
+            headers.set("Authorization", "Basic " + encodedAuthString);
+
+            Map<String, Object> body = new HashMap<>();
+
+            ReqPaymentObject.TransactionDetail transactionDetail = ReqPaymentObject.TransactionDetail.builder()
+                    .grossAmount(order.getTotalTransaction())
+                    .orderId(order.getId())
+                    .build();
+
+            body.put("transaction_details", generateTransactionDetail(transactionDetail));
+            body.put("payment_type", "gopay");
+
+            HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<ResponseCreateTransactionQris> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, ResponseCreateTransactionQris.class);
+            List<ResponseCreateTransactionQris.Actions> listAction = Objects.requireNonNull(response.getBody()).getActions();
+            List<PaymentAction> paymentActions = new ArrayList<>();
+            for (ResponseCreateTransactionQris.Actions action : listAction) {
+                PaymentAction paymentAction = PaymentAction.builder()
+                        .servingOrder(order)
+                        .name(action.getName())
+                        .method(action.getMethod())
+                        .url(action.getUrl())
+                        .expireTime(response.getBody().getExpiryTime().getTime())
+                        .build();
+                EntityUtils.created(paymentAction, currentAccountId);
+                paymentActions.add(paymentAction);
+            }
+            PaymentAction paymentAction = paymentActions.get(0);
+            return paymentAction.getUrl();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
     }
 
     private static Long getALong(SubscriptionOrder subscriptionOrder, Business business) {

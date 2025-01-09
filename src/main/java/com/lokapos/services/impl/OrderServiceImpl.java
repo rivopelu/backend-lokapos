@@ -3,6 +3,7 @@ package com.lokapos.services.impl;
 import com.lokapos.entities.MenuOrder;
 import com.lokapos.entities.ServingOrder;
 import com.lokapos.entities.ServingMenu;
+import com.lokapos.enums.ORDER_PAYMENT_METHOD_ENUM;
 import com.lokapos.enums.ORDER_STATUS_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.SystemErrorException;
@@ -12,6 +13,7 @@ import com.lokapos.repositories.ServingOrderRepository;
 import com.lokapos.repositories.ServingMenuRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.OrderService;
+import com.lokapos.services.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import utils.EntityUtils;
@@ -28,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
     private final AccountService accountService;
     private final ServingMenuRepository servingMenuRepository;
     private final MenuOrderRepository menuOrderRepository;
+    private final PaymentService paymentService;
 
     @Override
     public String createOrder(RequestCreateOrder req) {
@@ -37,14 +40,18 @@ public class OrderServiceImpl implements OrderService {
                     .paymentMethod(req.getPaymentMethod())
                     .build();
 
-            List<MenuOrder> menuOrderList = buildMenuOrders(req.getMenuList(), servingOrderBuilder);
-            return RESPONSE_ENUM.SUCCESS.name();
+            ServingOrder servingOrder = buildMenuOrders(req.getMenuList(), servingOrderBuilder);
+            String qrisUrl = null;
+            if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.QRIS)) {
+                qrisUrl = paymentService.createPaymentUsingEWallet(servingOrder);
+            }
+            return qrisUrl;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
     }
 
-    private List<MenuOrder> buildMenuOrders(List<RequestCreateOrder.ListMenu> listMenus, ServingOrder servingOrder) {
+    private ServingOrder buildMenuOrders(List<RequestCreateOrder.ListMenu> listMenus, ServingOrder servingOrder) {
         int index = 0;
         BigInteger totalTransaction = BigInteger.ZERO;
         try {
@@ -74,9 +81,9 @@ public class OrderServiceImpl implements OrderService {
 
             EntityUtils.created(servingOrder, accountService.getCurrentAccountId());
             servingOrder.setTotalTransaction(totalTransaction);
-            servingOrderRepository.save(servingOrder);
+            servingOrder = servingOrderRepository.save(servingOrder);
             menuOrderRepository.saveAll(menuOrders);
-            return menuOrders;
+            return servingOrder;
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

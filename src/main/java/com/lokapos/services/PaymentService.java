@@ -1,6 +1,7 @@
 package com.lokapos.services;
 
 import com.lokapos.annotations.BaseController;
+import com.lokapos.entities.ServingOrder;
 import com.lokapos.model.request.ReqNotificationMidTrans;
 import com.lokapos.model.request.ReqPaymentObject;
 import com.lokapos.model.response.SnapPaymentResponse;
@@ -12,4 +13,6 @@ public interface PaymentService {
     String postNotificationFromMidTrans(ReqNotificationMidTrans req);
 
     String createPaymentCustomInterface(ReqPaymentObject reqPaymentObject);
+
+    String createPaymentUsingEWallet(ServingOrder order);
 }
