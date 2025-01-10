@@ -44,11 +44,16 @@ public class OrderServiceImpl implements OrderService {
                     .paymentMethod(req.getPaymentMethod())
                     .build();
 
+            if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.CASH)){
+                servingOrderBuilder.setPaymentStatus(ORDER_PAYMENT_STATUS_ENUM.SUCCESS);
+            }
+
             ServingOrder servingOrder = buildMenuOrders(req.getMenuList(), servingOrderBuilder);
             String qrisUrl = null;
             if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.QRIS)) {
                 qrisUrl = paymentService.createPaymentUsingEWallet(servingOrder);
             }
+
             return ResponseCreateOrder.builder()
                     .qrisUrl(qrisUrl)
                     .orderId(servingOrder.getId())
@@ -71,6 +76,7 @@ public class OrderServiceImpl implements OrderService {
     private ServingOrder buildMenuOrders(List<RequestCreateOrder.ListMenu> listMenus, ServingOrder servingOrder) {
         int index = 0;
         BigInteger totalTransaction = BigInteger.ZERO;
+        BigInteger totalItem = BigInteger.ZERO;
         try {
             List<MenuOrder> menuOrders = new ArrayList<>();
             List<ServingMenu> servingMenuList = servingMenuRepository.findAllById(listMenus.stream().map(RequestCreateOrder.ListMenu::getMenuId).toList());
@@ -88,8 +94,10 @@ public class OrderServiceImpl implements OrderService {
                         .totalPrice(totalPrice)
                         .build();
                 index = index + 1;
-                BigInteger calclateTotal = totalTransaction.add(totalPrice);
-                totalTransaction = calclateTotal;
+                BigInteger calculateTotal = totalTransaction.add(totalPrice);
+                BigInteger calculateTotalItem = totalItem.add(listMenu.getQuantity());
+                totalTransaction = calculateTotal;
+                totalItem = calculateTotalItem;
                 menuOrders.add(menuOrder);
                 EntityUtils.created(menuOrder, accountService.getCurrentAccountId());
 
@@ -98,6 +106,7 @@ public class OrderServiceImpl implements OrderService {
 
             EntityUtils.created(servingOrder, accountService.getCurrentAccountId());
             servingOrder.setTotalTransaction(totalTransaction);
+            servingOrder.setTotalItem(totalItem);
             servingOrder = servingOrderRepository.save(servingOrder);
             menuOrderRepository.saveAll(menuOrders);
             return servingOrder;
