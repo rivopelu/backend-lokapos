@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "storage-sentrum-stagging",
+  "private_key_id": "754ea46a1b8814b9e76c8deba72aaaff817578aa",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDB69tYrpGpRGnC\nB4NeHHxyoeHaWJEhmdt5nFEFvwMrcsC5kjJ2ByJwi9pWKfLTdEDP3CFVi+k7AX/E\nOWIHYD7+KqXqVOJxe5l6T3Jh+DaojSNWUkEn4Yt7zoz8pwaLCNQGeN1AA5zX4rAY\n+uyHXHuDiDiPmwHgCUoCp35xhW5dWRcJ3OsTJToZqLepqZwd/sa6vMx13K5SRKOp\nO9OGmkWDCnPUN7WmNaSrYQnYiSzUN2nPmtUf1lC+yHWdVMBQpXNltF5Ug1hPbgv/\n/cPL1GNv+uBVCyHsiVGmQKZWllAu5Y9vObljhBWgIhFF6d0yjcA9V4OOkvUSM+PE\ndQuYTPvNAgMBAAECggEAUJHK75yQHnCzNA9lEEvrlMEXkl1r5zcCjhNZQnbrPTkP\nQ8qvNoSeVX51t4j0P9C0QOhn3SAlRgPIbuGcjg35/iYAC007TAUbbkrl7jhvlTYW\nsX25XnWCO21E/I/00v1XAl1jJ36YwsWHfsl6Tn8pPivxvBCeBdQ2MMYgbdAPW663\nTTr/ZccA0MVrRWGtZ/k3dwTTlu3c60VKVMDRjiBOTAHd//rW1G/zqsf37ifRGRPV\nJzLmVvD5wn7SxkSpIAduH6t8CdfFoAzCNEZY+1XbRc9glpApV1VYSQNHR0PVTB0s\ncKcTAW+29pbYcacPlFbZl94Ahqczy5C1l9nYG02b7QKBgQDLWPHMBoQpxz+fiOJq\nxJNDwv+Igy5EFAC8rPBH8zeRiQU284jn+VpO0Z7Hi85YhuwF8CaRRL1AeLjAt8E7\ndrBGRJGGiAYYqsdRHUIBQhD0C4pRmbYLHMpygMnXgC+VPTNlOTVCSRJU0bbrb9p9\nmetGLIQGpLDCbQfLI30r1KzxQwKBgQD0IhgCOcgtx5ncVbhDyhWmmR4Rxe8lvaqQ\nSqqme+kk2dsGH5T872eDqvXbw19sVqZeXPeG8FL2WUEVACHPg3dESPTG9QpuHh5A\ngL5JXLFoAXYhCGaa/s3jy/3ogjBYZURijEE49l9cDe3ZuXIgi11iUdCUQIEe4orF\nLt1Xv29FrwKBgQCTaEK/9+lOr9V7PKuFYkKu2GiM+StMxoNSQrtcLP+XTJCvKROR\ntby1bld/p+VJX2UxWMlcfUwDtH+ZlJtLE9rs1T/5GhnxP7uFHYR/jPjlMIhwZtEE\ndTZ8kse+pHnZ4aekNThaeMYFHpFPUqI8cpuPHy4F8tT/3DHOHEfcwissKQKBgQCK\nlewRH2H+cudpx5NhkA84UoVaS4VVZFS1sl0rQv33eGA4GqeF6hVWDi+hAEhkBNBO\nkvHEvRorVEF4vWl0FkoXDl89rg6sshY0QaFDngXrZ6D6YX11kR2pqbxKR9VP6LSo\nSLwhrOI3LIUP6pDZ3qM1VAJWlkN2F930z4TA8iAlawKBgEoYZwz7/N+ClBzQsx9t\nYHChyYmLkG9PJV0Nv4MCRSFWG96GC6Jtef+a8j/uF4bVlKwISavGQPhzLr0pBLmG\n45QrOlbLme4OGW3lP/tObwswsd8oKA9LGaV9L0WbqFuPYo0FTKSrKNAmL+Qm06A+\nuDszxBd4KrgjG2SJewxQG8B2\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-e2yph@storage-sentrum-stagging.iam.gserviceaccount.com",
+  "client_id": "114578969755656575683",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-e2yph%40storage-sentrum-stagging.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
