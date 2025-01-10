@@ -33,5 +33,8 @@ public class ServingOrder extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ORDER_PAYMENT_STATUS_ENUM paymentStatus;
 
+    @Column(name = "total_item")
+    private BigInteger totalItem;
+
 
 }
