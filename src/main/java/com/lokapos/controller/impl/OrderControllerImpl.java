@@ -6,6 +6,7 @@ import com.lokapos.model.request.RequestCreateOrder;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import utils.ResponseHelper;
 
 import java.util.List;
@@ -24,6 +25,12 @@ public class OrderControllerImpl implements OrderController {
     @Override
     public BaseResponse checkStatus(String orderId) {
         return ResponseHelper.createBaseResponse(orderService.checkStatus(orderId));
+    }
+
+    @Override
+    public BaseResponse getListOrder(Pageable pageable) {
+
+        return ResponseHelper.createBaseResponse(orderService.getListOrder(pageable));
     }
 
 }

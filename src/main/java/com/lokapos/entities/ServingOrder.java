@@ -36,5 +36,8 @@ public class ServingOrder extends BaseEntity {
     @Column(name = "total_item")
     private BigInteger totalItem;
 
+    @JoinColumn(name = "business")
+    @ManyToOne
+    private Business business;
 
 }

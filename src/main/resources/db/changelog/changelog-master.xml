@@ -31,4 +31,5 @@
     <include file="classpath:db/changelog/1.7.2_add_table_payment_action.xml"/>
     <include file="classpath:db/changelog/1.7.3_add_column_payment_status.xml"/>
     <include file="classpath:db/changelog/1.7.4_add_column_total_item_serving_order.xml"/>
+    <include file="classpath:db/changelog/1.7.5_add_column_business.xml"/>
 </databaseChangeLog>

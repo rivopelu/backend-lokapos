@@ -1,5 +1,6 @@
 package com.lokapos.services.impl;
 
+import com.lokapos.entities.Account;
 import com.lokapos.entities.MenuOrder;
 import com.lokapos.entities.ServingOrder;
 import com.lokapos.entities.ServingMenu;
@@ -7,10 +8,12 @@ import com.lokapos.enums.ORDER_PAYMENT_METHOD_ENUM;
 import com.lokapos.enums.ORDER_PAYMENT_STATUS_ENUM;
 import com.lokapos.enums.ORDER_STATUS_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
+import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateOrder;
 import com.lokapos.model.response.ResponseCheckOrderPaymentStatus;
 import com.lokapos.model.response.ResponseCreateOrder;
+import com.lokapos.model.response.ResponseListOrder;
 import com.lokapos.repositories.MenuOrderRepository;
 import com.lokapos.repositories.ServingOrderRepository;
 import com.lokapos.repositories.ServingMenuRepository;
@@ -18,6 +21,9 @@ import com.lokapos.services.AccountService;
 import com.lokapos.services.OrderService;
 import com.lokapos.services.PaymentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import utils.EntityUtils;
 
@@ -44,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
                     .paymentMethod(req.getPaymentMethod())
                     .build();
 
-            if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.CASH)){
+            if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.CASH)) {
                 servingOrderBuilder.setPaymentStatus(ORDER_PAYMENT_STATUS_ENUM.SUCCESS);
             }
 
@@ -66,17 +72,43 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseCheckOrderPaymentStatus checkStatus(String orderId) {
-       ORDER_PAYMENT_STATUS_ENUM orderPaymentStatusEnum =  paymentService.checkStatusOrder(orderId);
+        ORDER_PAYMENT_STATUS_ENUM orderPaymentStatusEnum = paymentService.checkStatusOrder(orderId);
 
         return ResponseCheckOrderPaymentStatus.builder()
                 .paymentStatus(orderPaymentStatusEnum)
                 .build();
     }
 
+    @Override
+    public Page<ResponseListOrder> getListOrder(Pageable pageable) {
+        String businessId = accountService.getCurrentBusinessIdOrNull();
+        try {
+            Page<ServingOrder> servingOrderPage = servingOrderRepository.findAllByBusinessIdAndActiveTrueOrderByCreatedDateDesc(pageable, businessId);
+            List<ResponseListOrder> responseListOrders = new ArrayList<>();
+            for (ServingOrder servingOrder : servingOrderPage) {
+                ResponseListOrder buildResponse = ResponseListOrder.builder()
+                        .id(servingOrder.getId())
+                        .status(servingOrder.getStatus())
+                        .totalOrder(servingOrder.getTotalTransaction())
+                        .totalItem(servingOrder.getTotalItem())
+                        .paymentMethod(servingOrder.getPaymentMethod())
+                        .build();
+                responseListOrders.add(buildResponse);
+            }
+            return new PageImpl<>(responseListOrders, pageable, servingOrderPage.getTotalElements());
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
     private ServingOrder buildMenuOrders(List<RequestCreateOrder.ListMenu> listMenus, ServingOrder servingOrder) {
         int index = 0;
         BigInteger totalTransaction = BigInteger.ZERO;
         BigInteger totalItem = BigInteger.ZERO;
+        Account account = accountService.getCurrentAccount();
+        if (account.getBusiness() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
+        }
         try {
             List<MenuOrder> menuOrders = new ArrayList<>();
             List<ServingMenu> servingMenuList = servingMenuRepository.findAllById(listMenus.stream().map(RequestCreateOrder.ListMenu::getMenuId).toList());
@@ -107,6 +139,7 @@ public class OrderServiceImpl implements OrderService {
             EntityUtils.created(servingOrder, accountService.getCurrentAccountId());
             servingOrder.setTotalTransaction(totalTransaction);
             servingOrder.setTotalItem(totalItem);
+            servingOrder.setBusiness(account.getBusiness());
             servingOrder = servingOrderRepository.save(servingOrder);
             menuOrderRepository.saveAll(menuOrders);
             return servingOrder;
