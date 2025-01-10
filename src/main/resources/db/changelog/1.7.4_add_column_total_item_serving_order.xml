@@ -6,7 +6,7 @@
 
     <changeSet id="1.7.4" author="rivo pelu">
             <addColumn tableName="serving_order">
-                <column name="total_item" defaultValue="0">
+                <column name="total_item" defaultValue="0" type="bigint">
                     <constraints nullable="false"/>
                 </column>
             </addColumn>
