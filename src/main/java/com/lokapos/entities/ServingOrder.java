@@ -39,13 +39,15 @@ public class ServingOrder extends BaseEntity {
     private Business business;
 
     @Column(name = "order_type")
+    @Enumerated(EnumType.STRING)
     private ORDER_TYPE_ENUM orderType;
 
     @Column(name = "platform")
+    @Enumerated(EnumType.STRING)
     private ORDER_PLATFORM_ENUM platform;
 
     @Column(name = "code")
-    private String code;
+    private BigInteger code;
 
 
 

@@ -26,6 +26,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import utils.EntityUtils;
+import utils.UtilsHelper;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -43,9 +44,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ResponseCreateOrder createOrder(RequestCreateOrder req) {
+        String businessId = accountService.getCurrentBusinessIdOrNull();
+        ServingOrder findLatest = servingOrderRepository.findLatestData(businessId).orElse(null);
+        BigInteger latestCode = null;
+        if (findLatest != null) {
+            latestCode = findLatest.getCode();
+        }
         try {
             ServingOrder servingOrderBuilder = ServingOrder.builder()
                     .status(ORDER_STATUS_ENUM.PENDING)
+                    .platform(req.getPlatform())
+                    .orderType(req.getType())
+                    .code(UtilsHelper.generateOrderCode(latestCode))
                     .paymentStatus(ORDER_PAYMENT_STATUS_ENUM.PENDING)
                     .paymentMethod(req.getPaymentMethod())
                     .build();
@@ -64,6 +74,7 @@ public class OrderServiceImpl implements OrderService {
                     .qrisUrl(qrisUrl)
                     .orderId(servingOrder.getId())
                     .paymentMethod(req.getPaymentMethod())
+                    .paymentStatus(servingOrder.getPaymentStatus())
                     .build();
         } catch (Exception e) {
             throw new SystemErrorException(e);
@@ -91,6 +102,9 @@ public class OrderServiceImpl implements OrderService {
                         .status(servingOrder.getStatus())
                         .totalOrder(servingOrder.getTotalTransaction())
                         .totalItem(servingOrder.getTotalItem())
+                        .type(servingOrder.getOrderType())
+                        .code(servingOrder.getCode())
+                        .platform(servingOrder.getPlatform())
                         .paymentMethod(servingOrder.getPaymentMethod())
                         .build();
                 responseListOrders.add(buildResponse);
