@@ -1,9 +1,7 @@
 package com.lokapos.entities;
 
 
-import com.lokapos.enums.ORDER_PAYMENT_METHOD_ENUM;
-import com.lokapos.enums.ORDER_PAYMENT_STATUS_ENUM;
-import com.lokapos.enums.ORDER_STATUS_ENUM;
+import com.lokapos.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,5 +37,17 @@ public class ServingOrder extends BaseEntity {
     @JoinColumn(name = "business")
     @ManyToOne
     private Business business;
+
+    @Column(name = "order_type")
+    private ORDER_TYPE_ENUM orderType;
+
+    @Column(name = "platform")
+    private ORDER_PLATFORM_ENUM platform;
+
+    @Column(name = "code")
+    private String code;
+
+
+
 
 }
