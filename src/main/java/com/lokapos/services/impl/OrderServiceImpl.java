@@ -102,6 +102,7 @@ public class OrderServiceImpl implements OrderService {
                         .status(servingOrder.getStatus())
                         .totalOrder(servingOrder.getTotalTransaction())
                         .totalItem(servingOrder.getTotalItem())
+                        .paymentStatus(servingOrder.getPaymentStatus())
                         .type(servingOrder.getOrderType())
                         .code(servingOrder.getCode())
                         .platform(servingOrder.getPlatform())
