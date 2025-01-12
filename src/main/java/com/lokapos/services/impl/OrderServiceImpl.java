@@ -13,6 +13,7 @@ import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateOrder;
 import com.lokapos.model.response.ResponseCheckOrderPaymentStatus;
 import com.lokapos.model.response.ResponseCreateOrder;
+import com.lokapos.model.response.ResponseDetailOrder;
 import com.lokapos.model.response.ResponseListOrder;
 import com.lokapos.repositories.MenuOrderRepository;
 import com.lokapos.repositories.ServingOrderRepository;
@@ -111,6 +112,42 @@ public class OrderServiceImpl implements OrderService {
                 responseListOrders.add(buildResponse);
             }
             return new PageImpl<>(responseListOrders, pageable, servingOrderPage.getTotalElements());
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseDetailOrder getOrderDetail(String id) {
+        ServingOrder servingOrder = servingOrderRepository.findById(id).orElseThrow(() -> new BadRequestException(RESPONSE_ENUM.ORDER_NOT_FOUND.name()));
+        List<MenuOrder> menuOrderList = menuOrderRepository.findAllByServingOrderId(servingOrder.getId());
+
+        try {
+
+            List<ResponseDetailOrder.MenuList> menuLists = new ArrayList<>();
+            for (MenuOrder menuOrder : menuOrderList) {
+                ResponseDetailOrder.MenuList menuList = ResponseDetailOrder.MenuList.builder()
+                        .name(menuOrder.getMenu().getName())
+                        .image(menuOrder.getMenu().getImage())
+                        .id(menuOrder.getMenu().getId())
+                        .quantity(menuOrder.getQuantity())
+                        .build();
+                menuLists.add(menuList);
+            }
+
+            return ResponseDetailOrder.builder()
+                    .id(servingOrder.getId())
+                    .status(servingOrder.getStatus())
+                    .paymentStatus(servingOrder.getPaymentStatus())
+                    .totalOrder(servingOrder.getTotalTransaction())
+                    .totalItem(servingOrder.getTotalItem())
+                    .paymentStatus(servingOrder.getPaymentStatus())
+                    .type(servingOrder.getOrderType())
+                    .paymentMethod(servingOrder.getPaymentMethod())
+                    .code(servingOrder.getCode())
+                    .platform(servingOrder.getPlatform())
+                    .menuList(menuLists)
+                    .build();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

@@ -21,4 +21,7 @@ public interface OrderController {
     @GetMapping("v1/list")
     BaseResponse getListOrder(Pageable pageable);
 
+    @GetMapping("v1/detail/{id}")
+    BaseResponse getOrderDetail(@PathVariable String id);
+
 }

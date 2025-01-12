@@ -33,4 +33,10 @@ public class OrderControllerImpl implements OrderController {
         return ResponseHelper.createBaseResponse(orderService.getListOrder(pageable));
     }
 
+    @Override
+    public BaseResponse getOrderDetail(String id) {
+
+        return ResponseHelper.createBaseResponse(orderService.getOrderDetail(id));
+    }
+
 }
