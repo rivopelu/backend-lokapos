@@ -8,7 +8,7 @@ import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateEditCategory;
-import com.lokapos.model.request.RequestCreateMenu;
+import com.lokapos.model.request.RequestCreateEditMenu;
 import com.lokapos.model.response.ResponseCategoryList;
 import com.lokapos.model.response.ResponseListMenu;
 import com.lokapos.repositories.CategoryMenuRepository;
@@ -79,7 +79,7 @@ public class MasterDataServiceImpl implements MasterDataService {
     }
 
     @Override
-    public String createNewMenu(RequestCreateMenu req) {
+    public String createNewMenu(RequestCreateEditMenu req) {
         CategoryMenu categoryMenu = categoryMenuRepository.findById(req.getCategoryId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.CATEGORY_NOT_FOUND.name()));
         Account account = accountService.getCurrentAccount();
         if (account.getBusiness() == null) {
@@ -127,6 +127,22 @@ public class MasterDataServiceImpl implements MasterDataService {
                 responseList.add(response);
             }
             return responseList;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public String editMenu(RequestCreateEditMenu req, String id) {
+        try {
+            ServingMenu servingMenu = servingMenuRepository.findById(id).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.MENU_NOT_FOUND.name()));
+            servingMenu.setPrice(req.getPrice());
+            servingMenu.setName(req.getName());
+            servingMenu.setDescription(req.getDescription());
+            servingMenu.setImage(req.getImageUrl());
+            servingMenu.setCategoryMenu(servingMenu.getCategoryMenu());
+            servingMenuRepository.save(servingMenu);
+            return RESPONSE_ENUM.SUCCESS.name();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

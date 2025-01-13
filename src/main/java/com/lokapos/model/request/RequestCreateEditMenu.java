@@ -16,7 +16,7 @@ import java.math.BigInteger;
 @AllArgsConstructor
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class RequestCreateMenu {
+public class RequestCreateEditMenu {
 
     private String name;
     private String description;

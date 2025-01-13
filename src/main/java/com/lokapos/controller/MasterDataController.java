@@ -1,14 +1,10 @@
 package com.lokapos.controller;
 
-import com.lokapos.annotations.AdminAccess;
 import com.lokapos.annotations.BaseController;
-import com.lokapos.annotations.SuperAdminAccess;
 import com.lokapos.model.request.RequestCreateEditCategory;
-import com.lokapos.model.request.RequestCreateMenu;
+import com.lokapos.model.request.RequestCreateEditMenu;
 import com.lokapos.model.response.BaseResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,8 +18,16 @@ public interface MasterDataController {
     BaseResponse getAllCategories();
 
     @PostMapping("v1/menu/new")
-    BaseResponse createNewMenu(@RequestBody RequestCreateMenu req);
+    BaseResponse createNewMenu(@RequestBody RequestCreateEditMenu req);
+
 
     @GetMapping("v1/menu/list")
     BaseResponse getAllMenus();
+
+
+    @PutMapping("/v1/menu/edit/{id}")
+    BaseResponse editMenu(
+            @RequestBody RequestCreateEditMenu req,
+            @PathVariable(name = "id") String id
+    );
 }

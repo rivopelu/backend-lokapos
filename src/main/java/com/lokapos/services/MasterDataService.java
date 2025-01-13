@@ -1,7 +1,7 @@
 package com.lokapos.services;
 
 import com.lokapos.model.request.RequestCreateEditCategory;
-import com.lokapos.model.request.RequestCreateMenu;
+import com.lokapos.model.request.RequestCreateEditMenu;
 import com.lokapos.model.response.ResponseCategoryList;
 import com.lokapos.model.response.ResponseListMenu;
 
@@ -13,7 +13,9 @@ public interface MasterDataService {
 
     List<ResponseCategoryList> getAllCategories();
 
-    String createNewMenu(RequestCreateMenu req);
+    String createNewMenu(RequestCreateEditMenu req);
 
     List<ResponseListMenu> getAllMenus();
+
+    String editMenu(RequestCreateEditMenu req, String id);
 }
