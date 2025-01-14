@@ -44,4 +44,9 @@ public class MasterDataControllerImpl implements MasterDataController {
         return ResponseHelper.createBaseResponse(masterDataService.editMenu(req, id));
     }
 
+    @Override
+    public BaseResponse getDetailMenu(String id) {
+        return ResponseHelper.createBaseResponse(masterDataService.getDetailMenu(id));
+    }
+
 }

@@ -10,6 +10,7 @@ import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateEditCategory;
 import com.lokapos.model.request.RequestCreateEditMenu;
 import com.lokapos.model.response.ResponseCategoryList;
+import com.lokapos.model.response.ResponseDetailMenu;
 import com.lokapos.model.response.ResponseListMenu;
 import com.lokapos.repositories.CategoryMenuRepository;
 import com.lokapos.repositories.ServingMenuRepository;
@@ -143,6 +144,27 @@ public class MasterDataServiceImpl implements MasterDataService {
             servingMenu.setCategoryMenu(servingMenu.getCategoryMenu());
             servingMenuRepository.save(servingMenu);
             return RESPONSE_ENUM.SUCCESS.name();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseDetailMenu getDetailMenu(String id) {
+
+        ServingMenu servingMenu = servingMenuRepository.findById(id).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.MENU_NOT_FOUND.name()));
+
+        try {
+
+            return ResponseDetailMenu.builder()
+                    .id(servingMenu.getId())
+                    .name(servingMenu.getName())
+                    .description(servingMenu.getDescription())
+                    .categoryId(servingMenu.getCategoryMenu().getId())
+                    .price(servingMenu.getPrice())
+                    .categoryName(servingMenu.getCategoryMenu().getName())
+                    .build();
+
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

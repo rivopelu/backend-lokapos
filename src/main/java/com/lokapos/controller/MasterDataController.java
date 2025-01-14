@@ -30,4 +30,7 @@ public interface MasterDataController {
             @RequestBody RequestCreateEditMenu req,
             @PathVariable(name = "id") String id
     );
+
+    @GetMapping("v1/menu/detail/{id}")
+    BaseResponse getDetailMenu(@PathVariable String id);
 }
