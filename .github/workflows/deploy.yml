@@ -2,7 +2,7 @@ name: DEPLOY STAGING
 
 on:
   push:
-    branches: [ "-" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -31,19 +31,19 @@ jobs:
           port: 22
           script: |
             ls
-            systemctl status app
-            sudo systemctl stop app
-            sudo systemctl status app
+            systemctl status lokapos
+            sudo systemctl stop lokapos
+            sudo systemctl status lokapos
             echo ================= SERVER 1 STOP APPLICATION SUCCESS =================
             cd app
             ls
-            git checkout development
-            git pull origin development
+            git checkout main
+            git pull origin main
             echo ================= SERVER 1 PULL SUCCESS =================
             mvn clean install
             echo INSTALL SUCCESS
             ./mvnw package -DskipTests=true
-            sudo systemctl start app
+            sudo systemctl start lokapos
             echo ================= START SUCCESS =================
-            sudo systemctl status app
+            sudo systemctl status lokapos
             echo ================= SERVER 1 DEPLOYING SUCCESS SERVER 1 =================
