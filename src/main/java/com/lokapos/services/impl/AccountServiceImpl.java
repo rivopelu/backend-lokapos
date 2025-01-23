@@ -46,7 +46,6 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordEncoder passwordEncoder;
     private final SubDistrictRepository subDistrictRepository;
     private final AreaService areaService;
-    private final BusinessRepository businessRepository;
 
     @Override
     public ResponseGetMe getMe() throws NotAuthorizedException {
@@ -68,6 +67,7 @@ public class AccountServiceImpl implements AccountService {
                     .lastName(account.getLastName())
                     .email(account.getEmail())
                     .id(account.getId())
+                    .avatar(account.getAvatar())
                     .business(responseBusinessDetail)
                     .build();
 
