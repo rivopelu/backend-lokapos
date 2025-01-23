@@ -35,7 +35,7 @@ jobs:
             sudo systemctl stop lokapos
             sudo systemctl status lokapos
             echo ================= SERVER 1 STOP APPLICATION SUCCESS =================
-            cd app
+            cd lokapos
             ls
             git checkout main
             git pull origin main
