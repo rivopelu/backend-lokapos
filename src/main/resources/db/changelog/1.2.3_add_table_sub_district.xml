@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.2.3" author="rivo pelu">
+        <createTable tableName="sub_district">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="province_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="city_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="district_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="postcode" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
