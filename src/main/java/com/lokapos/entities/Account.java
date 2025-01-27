@@ -47,6 +47,11 @@ public class Account extends BaseEntity implements UserDetails {
     @ManyToOne
     private Business business;
 
+    @JoinColumn(name = "merchant_id")
+    @ManyToOne
+    private Merchant merchant;
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
