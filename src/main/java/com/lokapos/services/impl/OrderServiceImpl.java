@@ -4,11 +4,9 @@ import com.lokapos.entities.Account;
 import com.lokapos.entities.MenuOrder;
 import com.lokapos.entities.ServingOrder;
 import com.lokapos.entities.ServingMenu;
-import com.lokapos.enums.ORDER_PAYMENT_METHOD_ENUM;
-import com.lokapos.enums.ORDER_PAYMENT_STATUS_ENUM;
-import com.lokapos.enums.ORDER_STATUS_ENUM;
-import com.lokapos.enums.RESPONSE_ENUM;
+import com.lokapos.enums.*;
 import com.lokapos.exception.BadRequestException;
+import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateOrder;
 import com.lokapos.model.response.ResponseCheckOrderPaymentStatus;
@@ -153,6 +151,18 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public String readyOrder(String id) {
+        ServingOrder servingOrder = servingOrderRepository.findById(id).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.ORDER_NOT_FOUND.name()));
+        servingOrder.setStatus(ORDER_STATUS_ENUM.READY);
+        try {
+            servingOrderRepository.save(servingOrder);
+            return RESPONSE_ENUM.SUCCESS.name();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
     private ServingOrder buildMenuOrders(List<RequestCreateOrder.ListMenu> listMenus, ServingOrder servingOrder) {
         int index = 0;
         BigInteger totalTransaction = BigInteger.ZERO;
@@ -184,7 +194,6 @@ public class OrderServiceImpl implements OrderService {
                 totalItem = calculateTotalItem;
                 menuOrders.add(menuOrder);
                 EntityUtils.created(menuOrder, accountService.getCurrentAccountId());
-
             }
 
 

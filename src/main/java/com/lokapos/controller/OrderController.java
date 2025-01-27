@@ -4,10 +4,7 @@ import com.lokapos.annotations.BaseController;
 import com.lokapos.model.request.RequestCreateOrder;
 import com.lokapos.model.response.BaseResponse;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @BaseController("order")
 public interface OrderController {
@@ -24,4 +21,6 @@ public interface OrderController {
     @GetMapping("v1/detail/{id}")
     BaseResponse getOrderDetail(@PathVariable String id);
 
+    @PatchMapping("v1/ready/{id}")
+    BaseResponse readyOrder(@PathVariable("id") String id);
 }
