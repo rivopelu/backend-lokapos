@@ -35,8 +35,6 @@ public class OrderServiceImpl implements OrderService {
     private final ServingMenuRepository servingMenuRepository;
     private final MenuOrderRepository menuOrderRepository;
     private final PaymentService paymentService;
-    private final MerchantRepository merchantRepository;
-    private final AccountRepository accountRepository;
 
     @Override
     public ResponseCreateOrder createOrder(RequestCreateOrder req) {
@@ -47,21 +45,23 @@ public class OrderServiceImpl implements OrderService {
             latestCode = findLatest.getCode();
         }
 
+        ServingOrder servingOrderBuilder = ServingOrder.builder()
+                .status(ORDER_STATUS_ENUM.PENDING)
+                .platform(req.getPlatform())
+                .orderType(req.getType())
+                .code(UtilsHelper.generateOrderCode(latestCode))
+                .paymentStatus(ORDER_PAYMENT_STATUS_ENUM.PENDING)
+                .paymentMethod(req.getPaymentMethod())
+                .build();
+
+        if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.CASH)) {
+            servingOrderBuilder.setPaymentStatus(ORDER_PAYMENT_STATUS_ENUM.SUCCESS);
+        }
+
+        ServingOrder servingOrder = buildMenuOrders(req.getMenuList(), servingOrderBuilder);
+
         try {
-            ServingOrder servingOrderBuilder = ServingOrder.builder()
-                    .status(ORDER_STATUS_ENUM.PENDING)
-                    .platform(req.getPlatform())
-                    .orderType(req.getType())
-                    .code(UtilsHelper.generateOrderCode(latestCode))
-                    .paymentStatus(ORDER_PAYMENT_STATUS_ENUM.PENDING)
-                    .paymentMethod(req.getPaymentMethod())
-                    .build();
 
-            if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.CASH)) {
-                servingOrderBuilder.setPaymentStatus(ORDER_PAYMENT_STATUS_ENUM.SUCCESS);
-            }
-
-            ServingOrder servingOrder = buildMenuOrders(req.getMenuList(), servingOrderBuilder);
             String qrisUrl = null;
             if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.QRIS)) {
                 qrisUrl = paymentService.createPaymentUsingEWallet(servingOrder);
@@ -170,6 +170,10 @@ public class OrderServiceImpl implements OrderService {
         if (account.getBusiness() == null) {
             throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
         }
+
+        if(account.getMerchant() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.MERCHANT_NOT_FOUND.name());
+        }
         try {
             List<MenuOrder> menuOrders = new ArrayList<>();
             List<ServingMenu> servingMenuList = servingMenuRepository.findAllById(listMenus.stream().map(RequestCreateOrder.ListMenu::getMenuId).toList());
@@ -183,6 +187,7 @@ public class OrderServiceImpl implements OrderService {
                         .servingOrder(servingOrder)
                         .quantity(listMenu.getQuantity())
                         .note(listMenu.getNote())
+                        .merchant(account.getMerchant())
                         .pricePerQty(servingMenu.getPrice())
                         .totalPrice(totalPrice)
                         .build();
@@ -200,6 +205,7 @@ public class OrderServiceImpl implements OrderService {
             servingOrder.setTotalTransaction(totalTransaction);
             servingOrder.setTotalItem(totalItem);
             servingOrder.setBusiness(account.getBusiness());
+            servingOrder.setMerchant(account.getMerchant());
             servingOrder = servingOrderRepository.save(servingOrder);
             menuOrderRepository.saveAll(menuOrders);
             return servingOrder;
