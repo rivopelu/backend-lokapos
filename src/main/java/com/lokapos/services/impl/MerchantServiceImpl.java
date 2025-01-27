@@ -5,9 +5,11 @@ import com.lokapos.entities.Business;
 import com.lokapos.entities.Merchant;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.BadRequestException;
+import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateMerchant;
 import com.lokapos.model.response.ResponseListMerchant;
+import com.lokapos.repositories.AccountRepository;
 import com.lokapos.repositories.MerchantRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.MerchantService;
@@ -27,6 +29,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     private final MerchantRepository merchantRepository;
     private final AccountService accountService;
+    private final AccountRepository accountRepository;
 
     @Override
     public RESPONSE_ENUM createMerchant(RequestCreateMerchant req) {
@@ -71,6 +74,19 @@ public class MerchantServiceImpl implements MerchantService {
                 responseListMerchants.add(responseListMerchant);
             }
             return new PageImpl<>(responseListMerchants, pageable, merchantPage.getTotalElements());
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public String selectMerchant(String merchantId) {
+        Account account = accountService.getCurrentAccount();
+        Merchant merchant = merchantRepository.findById(merchantId).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.MERCHANT_NOT_FOUND.name()));
+        try {
+            account.setMerchant(merchant);
+            accountRepository.save(account);
+            return RESPONSE_ENUM.SUCCESS.name();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

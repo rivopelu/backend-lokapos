@@ -21,4 +21,7 @@ public interface OrderService {
     ResponseDetailOrder getOrderDetail(String id);
 
     String readyOrder(String id);
+
+    
+
 }

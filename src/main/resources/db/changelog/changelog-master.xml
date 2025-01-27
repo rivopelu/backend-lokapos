@@ -35,4 +35,5 @@
     <include file="classpath:db/changelog/1.7.6_add_column_type_and_platform_order.xml"/>
     <include file="classpath:db/changelog/1.7.7_change_data_type_code_order.xml"/>
     <include file="classpath:db/changelog/1.8.0_add_column_merchant_account.xml"/>
+    <include file="classpath:db/changelog/1.8.1_add_column_merchant_in_order.xml"/>
 </databaseChangeLog>

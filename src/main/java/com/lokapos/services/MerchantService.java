@@ -12,4 +12,6 @@ public interface MerchantService {
     RESPONSE_ENUM createMerchant(RequestCreateMerchant req);
 
     Page<ResponseListMerchant> getListMerchant(Pageable pageable);
+
+    String selectMerchant(String merchantId);
 }

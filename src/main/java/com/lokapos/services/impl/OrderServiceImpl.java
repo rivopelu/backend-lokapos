@@ -1,9 +1,6 @@
 package com.lokapos.services.impl;
 
-import com.lokapos.entities.Account;
-import com.lokapos.entities.MenuOrder;
-import com.lokapos.entities.ServingOrder;
-import com.lokapos.entities.ServingMenu;
+import com.lokapos.entities.*;
 import com.lokapos.enums.*;
 import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.NotFoundException;
@@ -13,9 +10,7 @@ import com.lokapos.model.response.ResponseCheckOrderPaymentStatus;
 import com.lokapos.model.response.ResponseCreateOrder;
 import com.lokapos.model.response.ResponseDetailOrder;
 import com.lokapos.model.response.ResponseListOrder;
-import com.lokapos.repositories.MenuOrderRepository;
-import com.lokapos.repositories.ServingOrderRepository;
-import com.lokapos.repositories.ServingMenuRepository;
+import com.lokapos.repositories.*;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.OrderService;
 import com.lokapos.services.PaymentService;
@@ -40,6 +35,8 @@ public class OrderServiceImpl implements OrderService {
     private final ServingMenuRepository servingMenuRepository;
     private final MenuOrderRepository menuOrderRepository;
     private final PaymentService paymentService;
+    private final MerchantRepository merchantRepository;
+    private final AccountRepository accountRepository;
 
     @Override
     public ResponseCreateOrder createOrder(RequestCreateOrder req) {
@@ -49,6 +46,7 @@ public class OrderServiceImpl implements OrderService {
         if (findLatest != null) {
             latestCode = findLatest.getCode();
         }
+
         try {
             ServingOrder servingOrderBuilder = ServingOrder.builder()
                     .status(ORDER_STATUS_ENUM.PENDING)
@@ -162,6 +160,7 @@ public class OrderServiceImpl implements OrderService {
             throw new SystemErrorException(e);
         }
     }
+
 
     private ServingOrder buildMenuOrders(List<RequestCreateOrder.ListMenu> listMenus, ServingOrder servingOrder) {
         int index = 0;

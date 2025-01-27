@@ -59,8 +59,9 @@ public class AccountServiceImpl implements AccountService {
                 responseBusinessDetail = getBusinessDetail(account.getBusiness());
             }
 
+            Merchant merchant = account.getMerchant();
 
-            return ResponseGetMe.builder()
+            ResponseGetMe response = ResponseGetMe.builder()
                     .fullName(account.getFirstName() + " " + account.getLastName())
                     .firstName(account.getFirstName())
                     .isVerifiedEmail(account.getIsVerifiedEmail())
@@ -68,8 +69,18 @@ public class AccountServiceImpl implements AccountService {
                     .email(account.getEmail())
                     .id(account.getId())
                     .avatar(account.getAvatar())
+                    .role(account.getRole())
                     .business(responseBusinessDetail)
                     .build();
+
+            if (merchant != null) {
+                response.setMerchantId(merchant.getId());
+                response.setMerchantName(merchant.getMerchantName());
+                String merchantAddress = merchant.getAddress() + " " + areaService.getFullAddress(merchant.getProvinceId(), merchant.getCityId(), merchant.getDistrictId(), merchant.getSubDistrictId());
+                response.setMerchantAddress(merchantAddress);
+            }
+
+            return response;
 
         } catch (Exception e) {
             throw new SystemErrorException(e);

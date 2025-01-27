@@ -24,4 +24,10 @@ public class MerchantControllerImpl implements MerchantController {
     public BaseResponse getListMerchant(Pageable pageable) {
         return ResponseHelper.createBaseResponse(merchantService.getListMerchant(pageable));
     }
+
+
+    @Override
+    public BaseResponse selectMerchant(String merchantId) {
+        return ResponseHelper.createBaseResponse(merchantService.selectMerchant(merchantId));
+    }
 }

@@ -23,4 +23,5 @@ public interface OrderController {
 
     @PatchMapping("v1/ready/{id}")
     BaseResponse readyOrder(@PathVariable("id") String id);
+
 }

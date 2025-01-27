@@ -49,6 +49,10 @@ public class ServingOrder extends BaseEntity {
     @Column(name = "code")
     private BigInteger code;
 
+    @JoinColumn(name = "merchant_id")
+    @ManyToOne
+    private Merchant merchant;
+
 
 
 

@@ -34,5 +34,9 @@ public class MenuOrder extends BaseEntity {
     @Column(name = "note")
     private String note;
 
+    @JoinColumn(name = "merchant_id")
+    @ManyToOne
+    private Merchant merchant;
+
 
 }
