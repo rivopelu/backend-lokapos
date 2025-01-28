@@ -29,5 +29,7 @@ public class ResponseGetMe {
     private String merchantId;
     private String merchantName;
     private String merchantAddress;
+    private String shiftId;
+    private Boolean isActiveShift;
 
 }

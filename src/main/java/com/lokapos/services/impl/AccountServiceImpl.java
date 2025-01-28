@@ -70,6 +70,8 @@ public class AccountServiceImpl implements AccountService {
                     .id(account.getId())
                     .avatar(account.getAvatar())
                     .role(account.getRole())
+                    .shiftId(account.getActiveShift() != null ? account.getActiveShift().getId() : null)
+                    .isActiveShift(account.getActiveShift() != null)
                     .business(responseBusinessDetail)
                     .build();
 
