@@ -174,6 +174,10 @@ public class OrderServiceImpl implements OrderService {
         if(account.getMerchant() == null) {
             throw new BadRequestException(RESPONSE_ENUM.MERCHANT_NOT_FOUND.name());
         }
+
+        if(account.getActiveShift() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.NOT_ACTIVE_SHIFT.name());
+        }
         try {
             List<MenuOrder> menuOrders = new ArrayList<>();
             List<ServingMenu> servingMenuList = servingMenuRepository.findAllById(listMenus.stream().map(RequestCreateOrder.ListMenu::getMenuId).toList());
@@ -190,6 +194,7 @@ public class OrderServiceImpl implements OrderService {
                         .merchant(account.getMerchant())
                         .pricePerQty(servingMenu.getPrice())
                         .totalPrice(totalPrice)
+                        .shift(account.getActiveShift())
                         .build();
                 index = index + 1;
                 BigInteger calculateTotal = totalTransaction.add(totalPrice);
@@ -206,6 +211,7 @@ public class OrderServiceImpl implements OrderService {
             servingOrder.setTotalItem(totalItem);
             servingOrder.setBusiness(account.getBusiness());
             servingOrder.setMerchant(account.getMerchant());
+            servingOrder.setShift(account.getActiveShift());
             servingOrder = servingOrderRepository.save(servingOrder);
             menuOrderRepository.saveAll(menuOrders);
             return servingOrder;
