@@ -190,6 +190,8 @@ public class AccountServiceImpl implements AccountService {
                         .fullName(account.getFirstName() + " " + account.getLastName())
                         .role(account.getRole())
                         .email(account.getEmail())
+                        .shiftId(account.getActiveShift() != null ? account.getActiveShift().getId() : null)
+                        .isActiveShift(account.getActiveShift() != null)
                         .build();
                 responseListAccounts.add(responseListAccount);
             }

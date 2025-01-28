@@ -24,4 +24,6 @@ public class ResponseListAccount {
     private String avatar;
     private Long createdDate;
     private String email;
+    private String shiftId;
+    private Boolean isActiveShift;
 }
