@@ -52,6 +52,10 @@ public class Account extends BaseEntity implements UserDetails {
     @ManyToOne
     private Merchant merchant;
 
+    @JoinColumn(name = "active_shift_id")
+    @ManyToOne
+    private Shift activeShift;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

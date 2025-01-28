@@ -38,4 +38,5 @@
     <include file="classpath:db/changelog/1.8.1_add_column_merchant_in_order.xml"/>
     <include file="classpath:db/changelog/1.8.2_add_table_shift.xml"/>
     <include file="classpath:db/changelog/1.8.3_add_table_shift_account.xml"/>
+    <include file="classpath:db/changelog/1.8.4_add_column_active_shift_account.xml"/>
 </databaseChangeLog>
