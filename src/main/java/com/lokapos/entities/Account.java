@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -82,6 +83,5 @@ public class Account extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 
 }
