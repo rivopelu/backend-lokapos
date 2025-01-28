@@ -20,4 +20,9 @@ public class ShiftControllerImpl implements ShiftController {
         return ResponseHelper.createBaseResponse(shiftService.startShift(req));
 
     }
+
+    @Override
+    public BaseResponse closeShift() {
+        return ResponseHelper.createBaseResponse(shiftService.closeShift());
+    }
 }

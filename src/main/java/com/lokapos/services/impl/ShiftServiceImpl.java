@@ -41,7 +41,6 @@ public class ShiftServiceImpl implements ShiftService {
         }
 
 
-
         Shift shift = Shift.builder()
                 .startDate(new Date().getTime())
                 .isActive(true)
@@ -49,7 +48,7 @@ public class ShiftServiceImpl implements ShiftService {
                 .build();
         EntityUtils.created(shift, currentAccount.getId());
 
-        if(accountList.size() != req.getAccountIds().size()) {
+        if (accountList.size() != req.getAccountIds().size()) {
             throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_ID_NOT_MATCH.name());
         }
 
@@ -70,7 +69,7 @@ public class ShiftServiceImpl implements ShiftService {
 
             account.setActiveShift(shift);
 
-            if(account.getMerchant() == null){
+            if (account.getMerchant() == null) {
                 account.setMerchant(currentAccount.getMerchant());
             }
 
@@ -82,6 +81,39 @@ public class ShiftServiceImpl implements ShiftService {
 
             shiftAccountRepository.saveAll(shiftAccountList);
             accountRepository.saveAll(accountList);
+            return RESPONSE_ENUM.SUCCESS.name();
+
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public String closeShift() {
+        Account currentAccount = accountService.getCurrentAccount();
+        List<Account> listShiftAccount;
+
+        if (currentAccount.getActiveShift() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.NOT_ACTIVE_SHIFT.name());
+        }
+
+        Shift shift = currentAccount.getActiveShift();
+
+        listShiftAccount = accountRepository.findByActiveShiftId(shift.getId());
+
+        for (Account account : listShiftAccount) {
+            account.setActiveShift(null);
+        }
+
+        try {
+
+            shift.setIsActive(false);
+            shift.setEndDate(new Date().getTime());
+            shiftRepository.save(shift);
+
+            accountRepository.saveAll(listShiftAccount);
+
+
             return RESPONSE_ENUM.SUCCESS.name();
 
         } catch (Exception e) {
