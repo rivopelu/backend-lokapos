@@ -54,6 +54,10 @@ public class ServingOrder extends BaseEntity {
     private Merchant merchant;
 
 
+    @JoinColumn(name = "shift_id")
+    @ManyToOne
+    private Shift shift;
+
 
 
 }
