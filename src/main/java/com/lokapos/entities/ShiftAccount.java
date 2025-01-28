@@ -13,6 +13,7 @@ import lombok.*;
 public class ShiftAccount {
 
     @Id
+    @Column(name = "id")
     private String id;
 
     @JoinColumn(name = "shift_id")
