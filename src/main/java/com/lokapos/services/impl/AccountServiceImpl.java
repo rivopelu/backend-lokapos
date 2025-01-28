@@ -185,6 +185,7 @@ public class AccountServiceImpl implements AccountService {
                         .firstName(account.getFirstName())
                         .lastName(account.getLastName())
                         .avatar(account.getAvatar())
+                        .id(account.getId())
                         .createdDate(account.getCreatedDate())
                         .fullName(account.getFirstName() + " " + account.getLastName())
                         .role(account.getRole())

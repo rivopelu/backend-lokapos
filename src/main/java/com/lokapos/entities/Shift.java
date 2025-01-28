@@ -4,6 +4,7 @@ package com.lokapos.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -34,7 +35,7 @@ public class Shift extends BaseEntity {
             name = "shift_account",
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "shift_id"))
-    Set<Account> accounts;
+    List<Account> accounts;
 
 
 }

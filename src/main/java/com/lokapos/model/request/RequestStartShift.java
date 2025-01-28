@@ -18,5 +18,5 @@ import java.util.List;
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RequestStartShift {
-    private List<String> accountId;
+    private List<String> accountIds;
 }

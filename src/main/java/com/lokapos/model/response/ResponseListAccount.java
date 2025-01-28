@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ResponseListAccount {
+    private String id;
     private String firstName;
     private String lastName;
     private String fullName;

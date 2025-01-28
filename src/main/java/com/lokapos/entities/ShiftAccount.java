@@ -4,12 +4,15 @@ package com.lokapos.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+import java.util.UUID;
+
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "shift")
+@Table(name = "shift_account")
 public class ShiftAccount {
 
     @Id
@@ -23,4 +26,13 @@ public class ShiftAccount {
     @JoinColumn(name = "account_id")
     @ManyToOne
     private Account account;
+
+
+    @PrePersist
+    public void prePersist() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
+    }
+
 }
