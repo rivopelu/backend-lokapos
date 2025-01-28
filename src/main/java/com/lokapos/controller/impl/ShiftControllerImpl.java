@@ -6,6 +6,7 @@ import com.lokapos.model.request.RequestStartShift;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.ShiftService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import utils.ResponseHelper;
 
 @BaseControllerImpl
@@ -24,5 +25,10 @@ public class ShiftControllerImpl implements ShiftController {
     @Override
     public BaseResponse closeShift() {
         return ResponseHelper.createBaseResponse(shiftService.closeShift());
+    }
+
+    @Override
+    public BaseResponse staffShifts(Pageable pageable) {
+        return ResponseHelper.createBaseResponse(shiftService.staffShifts(pageable));
     }
 }

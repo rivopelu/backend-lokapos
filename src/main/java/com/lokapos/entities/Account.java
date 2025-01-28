@@ -56,6 +56,9 @@ public class Account extends BaseEntity implements UserDetails {
     @ManyToOne
     private Shift activeShift;
 
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShiftAccount> shiftAccounts;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

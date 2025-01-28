@@ -7,18 +7,24 @@ import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestStartShift;
+import com.lokapos.model.response.ResponseListShift;
 import com.lokapos.repositories.AccountRepository;
 import com.lokapos.repositories.ShiftAccountRepository;
 import com.lokapos.repositories.ShiftRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.ShiftService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import utils.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -116,6 +122,54 @@ public class ShiftServiceImpl implements ShiftService {
 
             return RESPONSE_ENUM.SUCCESS.name();
 
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public Page<ResponseListShift> staffShifts(Pageable pageable) {
+        Account currentAccount = accountService.getCurrentAccount();
+        List<ResponseListShift> responseListShiftList = new ArrayList<>();
+
+        Page<Shift> shiftPage = shiftRepository.getListStaffShift(currentAccount.getId(), pageable);
+
+        for (Shift shift : shiftPage.getContent()) {
+            ResponseListShift response = ResponseListShift.builder()
+                    .id(shift.getId())
+                    .startDate(shift.getStartDate())
+                    .endDate(shift.getEndDate())
+                    .build();
+
+            List<ResponseListShift.accountList> respnoseAccountList = new ArrayList<>();
+            List<ShiftAccount> shiftAccountList = new ArrayList<>(shift.getShiftAccounts());
+            List<Account> accountList = new ArrayList<>();
+
+            for (ShiftAccount shiftAccount : shiftAccountList) {
+                Account account = shiftAccount.getAccount();
+                System.out.println(account.getFirstName());
+                accountList.add(account);
+            }
+
+
+            for (Account account : new ArrayList<>(accountList)) {
+                ResponseListShift.accountList accountData = ResponseListShift.accountList.builder()
+                        .name(account.getFirstName() + " " + account.getLastName())
+                        .avatar(account.getAvatar())
+                        .id(account.getId())
+                        .email(account.getEmail())
+                        .build();
+                respnoseAccountList.add(accountData);
+            }
+
+            response.setAccount(respnoseAccountList);
+
+            responseListShiftList.add(response);
+        }
+
+
+        try {
+            return new PageImpl<>(responseListShiftList, pageable, shiftPage.getTotalElements());
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

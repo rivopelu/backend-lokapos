@@ -3,8 +3,10 @@ package com.lokapos.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -30,12 +32,8 @@ public class Shift extends BaseEntity {
     @JoinColumn(name = "is_active")
     private Boolean isActive;
 
-    @ManyToMany
-    @JoinTable(
-            name = "shift_account",
-            joinColumns = @JoinColumn(name = "account_id"),
-            inverseJoinColumns = @JoinColumn(name = "shift_id"))
-    List<Account> accounts;
+    @OneToMany(mappedBy = "shift", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShiftAccount> shiftAccounts;
 
 
 }
