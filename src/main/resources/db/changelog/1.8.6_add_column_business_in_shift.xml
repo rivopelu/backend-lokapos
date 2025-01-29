@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.8.6" author="rivo pelu">
+        <addColumn tableName="shift">
+            <column name="business_id" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint
+                baseTableName="shift"
+                baseColumnNames="business_id"
+                constraintName="business_shift_fk"
+                referencedTableName="business"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+</databaseChangeLog>

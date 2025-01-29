@@ -32,6 +32,10 @@ public class Shift extends BaseEntity {
     @JoinColumn(name = "is_active")
     private Boolean isActive;
 
+    @JoinColumn(name = "business_id")
+    @ManyToOne
+    private Business business;
+
     @OneToMany(mappedBy = "shift", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShiftAccount> shiftAccounts;
 

@@ -16,4 +16,6 @@ public interface ShiftService {
     Page<ResponseListShift> staffShifts(Pageable pageable);
 
     ResponseDetailShift detailShift(String id);
+
+    Page<ResponseListShift> adminShiftList(Pageable pageable);
 }

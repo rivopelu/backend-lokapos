@@ -206,4 +206,14 @@ public class ShiftServiceImpl implements ShiftService {
             throw new SystemErrorException(e);
         }
     }
+
+    @Override
+    public Page<ResponseListShift> adminShiftList(Pageable pageable) {
+
+        try {
+            return null;
+        }catch (Exception e){
+            throw new SystemErrorException(e);
+        }
+    }
 }

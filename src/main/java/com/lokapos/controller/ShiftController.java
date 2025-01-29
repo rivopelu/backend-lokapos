@@ -15,11 +15,14 @@ public interface ShiftController {
     @PatchMapping("v1/close")
     BaseResponse closeShift();
 
-
     @GetMapping("v1/staff-list")
     BaseResponse staffShifts(Pageable pageable);
 
     @GetMapping("v1/detail/{id}")
     BaseResponse detailShift(@PathVariable("id") String id);
+
+
+    @GetMapping("v1/admin/list")
+    BaseResponse adminShifts(Pageable pageable);
 
 }

@@ -37,4 +37,10 @@ public class ShiftControllerImpl implements ShiftController {
 
         return ResponseHelper.createBaseResponse(shiftService.detailShift(id));
     }
+
+    @Override
+    public BaseResponse adminShifts(Pageable pageable) {
+
+        return ResponseHelper.createBaseResponse(shiftService.adminShiftList(pageable));
+    }
 }
