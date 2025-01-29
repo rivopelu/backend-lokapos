@@ -5,8 +5,10 @@ import com.lokapos.entities.Shift;
 import com.lokapos.entities.ShiftAccount;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.BadRequestException;
+import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestStartShift;
+import com.lokapos.model.response.ResponseDetailShift;
 import com.lokapos.model.response.ResponseListShift;
 import com.lokapos.repositories.AccountRepository;
 import com.lokapos.repositories.ShiftAccountRepository;
@@ -139,6 +141,7 @@ public class ShiftServiceImpl implements ShiftService {
                     .id(shift.getId())
                     .startDate(shift.getStartDate())
                     .endDate(shift.getEndDate())
+                    .isActive(shift.getIsActive())
                     .build();
 
             List<ResponseListShift.accountList> respnoseAccountList = new ArrayList<>();
@@ -170,6 +173,35 @@ public class ShiftServiceImpl implements ShiftService {
 
         try {
             return new PageImpl<>(responseListShiftList, pageable, shiftPage.getTotalElements());
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public ResponseDetailShift detailShift(String id) {
+        Shift shift = shiftRepository.findById(id).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.SHIFT_NOT_FOUND.name()));
+        List<ResponseDetailShift.accountList> accountList = new ArrayList<>();
+        try {
+
+            for (ShiftAccount shiftAccount : shift.getShiftAccounts()) {
+                Account account = shiftAccount.getAccount();
+                ResponseDetailShift.accountList responseAccount = ResponseDetailShift.accountList.builder()
+                        .avatar(account.getAvatar())
+                        .id(account.getId())
+                        .name(account.getFirstName() + " " + account.getLastName())
+                        .email(account.getEmail())
+                        .build();
+                accountList.add(responseAccount);
+            }
+
+            return ResponseDetailShift.builder()
+                    .id(shift.getId())
+                    .startDate(shift.getStartDate())
+                    .endDate(shift.getEndDate())
+                    .isActive(shift.getIsActive())
+                    .account(accountList)
+                    .build();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }

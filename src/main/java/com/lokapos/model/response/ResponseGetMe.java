@@ -31,5 +31,6 @@ public class ResponseGetMe {
     private String merchantAddress;
     private String shiftId;
     private Boolean isActiveShift;
+    private Long startShiftDate;
 
 }

@@ -1,5 +1,6 @@
 package com.lokapos.model.response;
 
+
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -16,13 +17,12 @@ import java.util.List;
 @AllArgsConstructor
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ResponseListShift {
-
+public class ResponseDetailShift {
     private String id;
     private Long startDate;
     private Long endDate;
     private Boolean isActive;
-    private List<accountList> account;
+    private List<ResponseDetailShift.accountList> account;
 
 
     @Data
@@ -32,12 +32,10 @@ public class ResponseListShift {
     @JsonSerialize
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class accountList {
-
         private String name;
         private String avatar;
         private String id;
         private String email;
 
     }
-
 }
