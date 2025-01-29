@@ -21,7 +21,6 @@ public interface ShiftController {
     @GetMapping("v1/detail/{id}")
     BaseResponse detailShift(@PathVariable("id") String id);
 
-
     @GetMapping("v1/admin/list")
     BaseResponse adminShifts(Pageable pageable);
 

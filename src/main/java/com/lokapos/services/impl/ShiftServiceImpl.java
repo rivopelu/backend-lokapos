@@ -14,6 +14,7 @@ import com.lokapos.repositories.AccountRepository;
 import com.lokapos.repositories.ShiftAccountRepository;
 import com.lokapos.repositories.ShiftRepository;
 import com.lokapos.services.AccountService;
+import com.lokapos.services.AreaService;
 import com.lokapos.services.ShiftService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ public class ShiftServiceImpl implements ShiftService {
     private final AccountService accountService;
     private final ShiftRepository shiftRepository;
     private final ShiftAccountRepository shiftAccountRepository;
+    private final AreaService areaService;
 
     @Override
     public String startShift(RequestStartShift req) {
@@ -198,6 +200,7 @@ public class ShiftServiceImpl implements ShiftService {
                     .id(shift.getId())
                     .startDate(shift.getStartDate())
                     .endDate(shift.getEndDate())
+                    .merchantName(shift.getMerchant().getMerchantName())
                     .isActive(shift.getIsActive())
                     .build();
 

@@ -22,6 +22,8 @@ public class ResponseListShift {
     private Long startDate;
     private Long endDate;
     private Boolean isActive;
+    private String merchantName;
+    private String merchantAddress;
     private List<accountList> account;
 
 

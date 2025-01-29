@@ -41,4 +41,5 @@
     <include file="classpath:db/changelog/1.8.4_add_column_active_shift_account.xml"/>
     <include file="classpath:db/changelog/1.8.5_add_column_shift_in_order.xml"/>
     <include file="classpath:db/changelog/1.8.6_add_column_business_in_shift.xml"/>
+    <include file="classpath:db/changelog/1.8.7_create_index_for_area.xml"/>
 </databaseChangeLog>

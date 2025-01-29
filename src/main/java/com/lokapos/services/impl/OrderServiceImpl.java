@@ -182,7 +182,6 @@ public class OrderServiceImpl implements OrderService {
             List<MenuOrder> menuOrders = new ArrayList<>();
             List<ServingMenu> servingMenuList = servingMenuRepository.findAllById(listMenus.stream().map(RequestCreateOrder.ListMenu::getMenuId).toList());
 
-            System.out.println(servingMenuList);
             for (RequestCreateOrder.ListMenu listMenu : listMenus) {
                 ServingMenu servingMenu = servingMenuList.get(index);
                 BigInteger totalPrice = servingMenu.getPrice().multiply(listMenu.getQuantity());
