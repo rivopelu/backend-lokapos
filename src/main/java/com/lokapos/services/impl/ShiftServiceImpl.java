@@ -52,6 +52,7 @@ public class ShiftServiceImpl implements ShiftService {
         Shift shift = Shift.builder()
                 .startDate(new Date().getTime())
                 .isActive(true)
+                .business(currentAccount.getBusiness())
                 .merchant(currentAccount.getMerchant())
                 .build();
         EntityUtils.created(shift, currentAccount.getId());
