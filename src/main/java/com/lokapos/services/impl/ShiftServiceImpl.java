@@ -133,46 +133,11 @@ public class ShiftServiceImpl implements ShiftService {
     @Override
     public Page<ResponseListShift> staffShifts(Pageable pageable) {
         Account currentAccount = accountService.getCurrentAccount();
-        List<ResponseListShift> responseListShiftList = new ArrayList<>();
 
         Page<Shift> shiftPage = shiftRepository.getListStaffShift(currentAccount.getId(), pageable);
 
-        for (Shift shift : shiftPage.getContent()) {
-            ResponseListShift response = ResponseListShift.builder()
-                    .id(shift.getId())
-                    .startDate(shift.getStartDate())
-                    .endDate(shift.getEndDate())
-                    .isActive(shift.getIsActive())
-                    .build();
-
-            List<ResponseListShift.accountList> respnoseAccountList = new ArrayList<>();
-            List<ShiftAccount> shiftAccountList = new ArrayList<>(shift.getShiftAccounts());
-            List<Account> accountList = new ArrayList<>();
-
-            for (ShiftAccount shiftAccount : shiftAccountList) {
-                Account account = shiftAccount.getAccount();
-                System.out.println(account.getFirstName());
-                accountList.add(account);
-            }
-
-
-            for (Account account : new ArrayList<>(accountList)) {
-                ResponseListShift.accountList accountData = ResponseListShift.accountList.builder()
-                        .name(account.getFirstName() + " " + account.getLastName())
-                        .avatar(account.getAvatar())
-                        .id(account.getId())
-                        .email(account.getEmail())
-                        .build();
-                respnoseAccountList.add(accountData);
-            }
-
-            response.setAccount(respnoseAccountList);
-
-            responseListShiftList.add(response);
-        }
-
-
         try {
+            List<ResponseListShift> responseListShiftList = buildShiftList(shiftPage.getContent());
             return new PageImpl<>(responseListShiftList, pageable, shiftPage.getTotalElements());
         } catch (Exception e) {
             throw new SystemErrorException(e);
@@ -210,11 +175,59 @@ public class ShiftServiceImpl implements ShiftService {
 
     @Override
     public Page<ResponseListShift> adminShiftList(Pageable pageable) {
+        String businessId = accountService.getCurrentBusinessIdOrNull();
+        if (businessId == null) {
+            throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
+        }
+
 
         try {
-            return null;
-        }catch (Exception e){
+            Page<Shift> shiftPage = shiftRepository.getShiftByBusinessId(businessId, pageable);
+            List<ResponseListShift> responseListShiftList = buildShiftList(shiftPage.getContent());
+
+            return new PageImpl<>(responseListShiftList, pageable, shiftPage.getTotalElements());
+        } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    private List<ResponseListShift> buildShiftList(List<Shift> shiftList) {
+        List<ResponseListShift> responseListShiftList = new ArrayList<>();
+        for (Shift shift : shiftList) {
+            ResponseListShift response = ResponseListShift.builder()
+                    .id(shift.getId())
+                    .startDate(shift.getStartDate())
+                    .endDate(shift.getEndDate())
+                    .isActive(shift.getIsActive())
+                    .build();
+
+            List<ResponseListShift.accountList> respnoseAccountList = new ArrayList<>();
+            List<ShiftAccount> shiftAccountList = new ArrayList<>(shift.getShiftAccounts());
+            List<Account> accountList = new ArrayList<>();
+
+            for (ShiftAccount shiftAccount : shiftAccountList) {
+                Account account = shiftAccount.getAccount();
+                System.out.println(account.getFirstName());
+                accountList.add(account);
+            }
+
+
+            for (Account account : new ArrayList<>(accountList)) {
+                ResponseListShift.accountList accountData = ResponseListShift.accountList.builder()
+                        .name(account.getFirstName() + " " + account.getLastName())
+                        .avatar(account.getAvatar())
+                        .id(account.getId())
+                        .email(account.getEmail())
+                        .build();
+                respnoseAccountList.add(accountData);
+            }
+
+            response.setAccount(respnoseAccountList);
+
+            responseListShiftList.add(response);
+        }
+
+        return responseListShiftList;
+
     }
 }
