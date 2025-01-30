@@ -30,6 +30,6 @@ target/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
-
+/src/main/resources/firebase.json
 ### VS Code ###
 .vscode/
