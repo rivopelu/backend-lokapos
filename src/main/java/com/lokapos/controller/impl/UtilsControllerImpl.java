@@ -13,7 +13,7 @@ import utils.ResponseHelper;
 public class UtilsControllerImpl implements UtilsController {
     private final UtilsService utilsService;
     @Override
-    public BaseResponse upload(MultipartFile multipartFile) {
-        return ResponseHelper.createBaseResponse(utilsService.uploadFile(multipartFile));
+    public BaseResponse upload(MultipartFile multipartFile, String folder) {
+        return ResponseHelper.createBaseResponse(utilsService.uploadFile(multipartFile, folder));
     }
 }

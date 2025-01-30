@@ -10,6 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface UtilsController {
 
     @PostMapping("v1/upload")
-    BaseResponse upload(@RequestParam("file") MultipartFile multipartFile);
+    BaseResponse upload(@RequestParam("file") MultipartFile multipartFile, @RequestParam("folder") String folder);
 
 }

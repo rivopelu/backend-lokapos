@@ -5,5 +5,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UtilsService {
 
-    ResponseUrl uploadFile(MultipartFile file);
+    ResponseUrl uploadFile(MultipartFile file, String folder);
 }
