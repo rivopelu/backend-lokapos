@@ -32,4 +32,6 @@ public interface AccountService {
     String getCurrentBusinessIdOrNull();
 
     ResponseCreateAccount createAccount(RequestCreateAccount req);
+
+    String saveFcmToken(String token);
 }

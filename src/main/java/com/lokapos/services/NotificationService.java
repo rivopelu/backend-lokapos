@@ -11,7 +11,6 @@ public interface NotificationService {
 
     void sendMessageToToken(Notification request) throws ExecutionException, InterruptedException;
 
-
     void pushNotificationSingle(Notification notification) throws ExecutionException, InterruptedException;
 
     void pushNotificationList(List<Notification> notificationList) throws ExecutionException, InterruptedException, FirebaseMessagingException;

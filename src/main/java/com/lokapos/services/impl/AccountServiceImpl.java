@@ -262,5 +262,17 @@ public class AccountServiceImpl implements AccountService {
         }
     }
 
+    @Override
+    public String saveFcmToken(String token) {
+        Account account = getCurrentAccount();
+        try {
+            account.setFcmToken(token);
+            accountRepository.save(account);
+            return RESPONSE_ENUM.SUCCESS.name();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
 
 }

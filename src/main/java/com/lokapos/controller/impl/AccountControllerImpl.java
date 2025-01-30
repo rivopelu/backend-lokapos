@@ -42,4 +42,10 @@ public class AccountControllerImpl implements AccountController {
 
         return  ResponseHelper.createBaseResponse(accountService.createAccount(req));
     }
+
+    @Override
+    public BaseResponse saveFcmToken(String token) {
+
+        return ResponseHelper.createBaseResponse(accountService.saveFcmToken(token));
+    }
 }
