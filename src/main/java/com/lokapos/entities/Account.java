@@ -56,6 +56,9 @@ public class Account extends BaseEntity implements UserDetails {
     @ManyToOne
     private Shift activeShift;
 
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShiftAccount> shiftAccounts;
 

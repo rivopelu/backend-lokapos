@@ -19,6 +19,10 @@ target/
 *.iml
 *.ipr
 
+/src/main/resources/firebase.json
+/src/main/resources/firebase-messaging.json
+
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
