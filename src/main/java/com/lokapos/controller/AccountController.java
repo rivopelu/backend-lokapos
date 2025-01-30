@@ -26,6 +26,6 @@ public interface AccountController {
     BaseResponse createAccount(@RequestBody RequestCreateAccount req);
 
     @PatchMapping("v1/save-fcm-token")
-    BaseResponse saveFcmToken(@RequestParam String fcmToken);
+    BaseResponse saveFcmToken(@RequestParam(name = "token") String fcmToken);
 
 }
