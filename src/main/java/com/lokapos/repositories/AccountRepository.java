@@ -1,6 +1,7 @@
 package com.lokapos.repositories;
 
 import com.lokapos.entities.Account;
+import com.lokapos.enums.USER_ROLE_ENUM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     Page<Account> findAllByBusinessIdAndActiveIsTrueOrderByCreatedDateDesc(Pageable pageable, String businessId);
 
     List<Account> findByActiveShiftId(String shiftId);
+
+    List<Account> findByBusinessIdAndActiveIsTrueAndRole(String business_id, USER_ROLE_ENUM role);
 }

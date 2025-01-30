@@ -3,7 +3,12 @@ package com.lokapos.entities;
 
 import com.lokapos.enums.NOTIFICATION_TYPE_ENUM;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
 
 @Data
 @Entity
@@ -36,6 +41,14 @@ public class Notification  {
 
     @Column(name = "token")
     private String token;
+
+
+    @PrePersist
+    public void prePersist() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID().toString();
+        }
+    }
 
 }
 

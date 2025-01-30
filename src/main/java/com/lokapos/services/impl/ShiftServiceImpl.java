@@ -1,9 +1,9 @@
 package com.lokapos.services.impl;
 
-import com.lokapos.entities.Account;
-import com.lokapos.entities.Shift;
-import com.lokapos.entities.ShiftAccount;
+import com.lokapos.entities.*;
+import com.lokapos.enums.NOTIFICATION_TYPE_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
+import com.lokapos.enums.USER_ROLE_ENUM;
 import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
@@ -11,10 +11,12 @@ import com.lokapos.model.request.RequestStartShift;
 import com.lokapos.model.response.ResponseDetailShift;
 import com.lokapos.model.response.ResponseListShift;
 import com.lokapos.repositories.AccountRepository;
+import com.lokapos.repositories.NotificationRepository;
 import com.lokapos.repositories.ShiftAccountRepository;
 import com.lokapos.repositories.ShiftRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.AreaService;
+import com.lokapos.services.NotificationService;
 import com.lokapos.services.ShiftService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,12 +39,21 @@ public class ShiftServiceImpl implements ShiftService {
     private final ShiftRepository shiftRepository;
     private final ShiftAccountRepository shiftAccountRepository;
     private final AreaService areaService;
+    private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     @Override
     public String startShift(RequestStartShift req) {
 
+        if (req.getAccountIds().isEmpty()){
+            throw new BadRequestException("Account IDs cannot be empty");
+        }
+
         Account currentAccount = accountService.getCurrentAccount();
         List<Account> accountList = accountRepository.findAllById(req.getAccountIds());
+
+        List<Account> adminAccountList = accountRepository.findByBusinessIdAndActiveIsTrueAndRole(currentAccount.getBusiness().getId(), USER_ROLE_ENUM.ADMIN);
+
 
         List<ShiftAccount> shiftAccountList = new ArrayList<>();
 
@@ -70,6 +81,28 @@ public class ShiftServiceImpl implements ShiftService {
         }
 
         shiftRepository.save(shift);
+
+        List<Notification> notificationList = new ArrayList<>();
+        for (Account account : adminAccountList) {
+            Business business = account.getBusiness();
+            if (account.getFcmToken() != null) {
+                System.out.println(account.getEmail());
+                notificationList.add(
+                        Notification.builder()
+                                .title("shift_started_title")
+                                .body("shift_started_body")
+                                .type(NOTIFICATION_TYPE_ENUM.START_SHIFT)
+                                .account(account)
+                                .token(account.getFcmToken())
+                                .business(business)
+                                .build()
+                );
+            }
+        }
+        if (!notificationList.isEmpty()) {
+            notificationList = notificationRepository.saveAll(notificationList);
+            notificationService.pushNotificationList(notificationList);
+        }
 
         for (Account account : accountList) {
             account.setActiveShift(shift);
@@ -108,6 +141,8 @@ public class ShiftServiceImpl implements ShiftService {
             throw new BadRequestException(RESPONSE_ENUM.NOT_ACTIVE_SHIFT.name());
         }
 
+
+
         Shift shift = currentAccount.getActiveShift();
 
         listShiftAccount = accountRepository.findByActiveShiftId(shift.getId());
@@ -116,6 +151,28 @@ public class ShiftServiceImpl implements ShiftService {
             account.setActiveShift(null);
         }
 
+        List<Account> adminAccountList = accountRepository.findByBusinessIdAndActiveIsTrueAndRole(currentAccount.getBusiness().getId(), USER_ROLE_ENUM.ADMIN);
+        List<Notification> notificationList = new ArrayList<>();
+        for (Account account : adminAccountList) {
+            Business business = account.getBusiness();
+            if (account.getFcmToken() != null) {
+                System.out.println(account.getEmail());
+                notificationList.add(
+                        Notification.builder()
+                                .title("shift_stop_title")
+                                .body("shift_stop_body")
+                                .type(NOTIFICATION_TYPE_ENUM.STOP_SHIFT)
+                                .account(account)
+                                .token(account.getFcmToken())
+                                .business(business)
+                                .build()
+                );
+            }
+        }
+        if (!notificationList.isEmpty()) {
+            notificationList = notificationRepository.saveAll(notificationList);
+            notificationService.pushNotificationList(notificationList);
+        }
         try {
 
             shift.setIsActive(false);
@@ -184,6 +241,7 @@ public class ShiftServiceImpl implements ShiftService {
 
 
         try {
+
             Page<Shift> shiftPage = shiftRepository.getShiftByBusinessId(businessId, pageable);
             List<ResponseListShift> responseListShiftList = buildShiftList(shiftPage.getContent());
 

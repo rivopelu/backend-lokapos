@@ -13,7 +13,7 @@ public interface NotificationService {
 
     void pushNotificationSingle(Notification notification) throws ExecutionException, InterruptedException;
 
-    void pushNotificationList(List<Notification> notificationList) throws ExecutionException, InterruptedException, FirebaseMessagingException;
+    void pushNotificationList(List<Notification> notificationList);
 
 
 }

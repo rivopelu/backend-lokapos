@@ -53,7 +53,6 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void pushNotificationList(List<Notification> notificationList) {
-
         if (notificationList.isEmpty()) {
             System.out.println("OKE");
         } else {

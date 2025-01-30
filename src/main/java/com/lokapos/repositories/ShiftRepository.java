@@ -12,5 +12,6 @@ public interface ShiftRepository extends JpaRepository<Shift, String> {
             "on s.id = sa.shift.id where sa.account.id = :accountId order by s.createdDate desc")
     Page<Shift> getListStaffShift(String accountId, Pageable pageable);
 
+    @Query("select  s from Shift  as s where s.business.id = :business order by s.createdDate desc ")
     Page<Shift> getShiftByBusinessId(String business, Pageable pageable);
 }
