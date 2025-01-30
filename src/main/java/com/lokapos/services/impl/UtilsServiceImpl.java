@@ -27,7 +27,10 @@ import java.util.UUID;
 @Service
 public class UtilsServiceImpl implements UtilsService {
     @Override
-    public ResponseUrl uploadFile(MultipartFile multipartFile) {
+    public ResponseUrl uploadFile(MultipartFile multipartFile, String folder) throws BadRequestException {
+        if (folder == null || folder.isEmpty()) {
+            throw new BadRequestException("Folder required");
+        }
         try {
             String fileName = multipartFile.getOriginalFilename();
             if (fileName != null) {
@@ -35,39 +38,13 @@ public class UtilsServiceImpl implements UtilsService {
             }
             BufferedImage image = ImageIO.read(multipartFile.getInputStream());
             File file = this.convertToFile(image, fileName);
-            String URL = this.uploadFile(file, fileName);
+            String URL = this.uploadFile(file, fileName, folder);
             file.delete();
             return ResponseUrl.builder().url(URL).build();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
     }
-
-    private File resizeImage(BufferedImage originalImage, int targetWidth, int targetHeight) throws IOException {
-        // Create a new image with the desired dimensions
-        BufferedImage resizedImage = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
-
-        // Get the Graphics2D object for drawing
-        Graphics2D graphics2D = resizedImage.createGraphics();
-
-        // Set rendering hints for better quality (optional but recommended)
-        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-        // Draw the original image onto the resized image
-        graphics2D.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
-        graphics2D.dispose();
-
-        // Get a unique filename for the resized image
-        String fileName = "resized_" + System.currentTimeMillis() + ".jpg"; // Or your preferred extension
-        File file = new File(fileName);
-
-        // Save the resized image
-        ImageIO.write(resizedImage, "jpg", file);
-
-        return file;
-    }
-
 
 
     private String getExtension(String fileName) {
@@ -83,9 +60,10 @@ public class UtilsServiceImpl implements UtilsService {
         return tempFile;
     }
 
-    private String uploadFile(File file, String fileName) throws IOException {
+    private String uploadFile(File file, String fileName, String folder) throws IOException {
         String bucketName = "storage-sentrum-stagging.appspot.com";
-        BlobId blobId = BlobId.of(bucketName, fileName);
+        String fullPath = folder + "/" + fileName; // Adding folder structure
+        BlobId blobId = BlobId.of(bucketName, fullPath);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("media").build();
         InputStream inputStream = UtilsService.class.getClassLoader().getResourceAsStream("firebase.json");
         if (inputStream == null) {
@@ -96,6 +74,6 @@ public class UtilsServiceImpl implements UtilsService {
         storage.create(blobInfo, Files.readAllBytes(file.toPath()));
 
         String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/" + bucketName + "/o/%s?alt=media";
-        return String.format(DOWNLOAD_URL, URLEncoder.encode(fileName, StandardCharsets.UTF_8));
+        return String.format(DOWNLOAD_URL, URLEncoder.encode(fullPath, StandardCharsets.UTF_8));
     }
 }

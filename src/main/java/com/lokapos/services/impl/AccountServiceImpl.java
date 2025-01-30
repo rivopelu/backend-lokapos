@@ -46,7 +46,6 @@ public class AccountServiceImpl implements AccountService {
     private final PasswordEncoder passwordEncoder;
     private final SubDistrictRepository subDistrictRepository;
     private final AreaService areaService;
-    private final BusinessRepository businessRepository;
 
     @Override
     public ResponseGetMe getMe() throws NotAuthorizedException {
@@ -60,16 +59,31 @@ public class AccountServiceImpl implements AccountService {
                 responseBusinessDetail = getBusinessDetail(account.getBusiness());
             }
 
+            Merchant merchant = account.getMerchant();
 
-            return ResponseGetMe.builder()
+            ResponseGetMe response = ResponseGetMe.builder()
                     .fullName(account.getFirstName() + " " + account.getLastName())
                     .firstName(account.getFirstName())
                     .isVerifiedEmail(account.getIsVerifiedEmail())
                     .lastName(account.getLastName())
                     .email(account.getEmail())
                     .id(account.getId())
+                    .avatar(account.getAvatar())
+                    .role(account.getRole())
+                    .shiftId(account.getActiveShift() != null ? account.getActiveShift().getId() : null)
+                    .startShiftDate(account.getActiveShift() != null ? account.getActiveShift().getStartDate() : null)
+                    .isActiveShift(account.getActiveShift() != null)
                     .business(responseBusinessDetail)
                     .build();
+
+            if (merchant != null) {
+                response.setMerchantId(merchant.getId());
+                response.setMerchantName(merchant.getMerchantName());
+                String merchantAddress = merchant.getAddress() + " " + areaService.getFullAddress(merchant.getProvinceId(), merchant.getCityId(), merchant.getDistrictId(), merchant.getSubDistrictId());
+                response.setMerchantAddress(merchantAddress);
+            }
+
+            return response;
 
         } catch (Exception e) {
             throw new SystemErrorException(e);
@@ -174,10 +188,13 @@ public class AccountServiceImpl implements AccountService {
                         .firstName(account.getFirstName())
                         .lastName(account.getLastName())
                         .avatar(account.getAvatar())
+                        .id(account.getId())
                         .createdDate(account.getCreatedDate())
                         .fullName(account.getFirstName() + " " + account.getLastName())
                         .role(account.getRole())
                         .email(account.getEmail())
+                        .shiftId(account.getActiveShift() != null ? account.getActiveShift().getId() : null)
+                        .isActiveShift(account.getActiveShift() != null)
                         .build();
                 responseListAccounts.add(responseListAccount);
             }

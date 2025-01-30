@@ -3,11 +3,12 @@ package com.lokapos.model.response;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.lokapos.enums.USER_ROLE_ENUM;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -15,22 +16,30 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ResponseGetMe {
+public class ResponseListShift {
 
-    private String fullName;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private Boolean isVerifiedEmail;
     private String id;
-    private ResponseBusinessDetail business;
-    private String avatar;
-    private USER_ROLE_ENUM role;
-    private String merchantId;
+    private Long startDate;
+    private Long endDate;
+    private Boolean isActive;
     private String merchantName;
     private String merchantAddress;
-    private String shiftId;
-    private Boolean isActiveShift;
-    private Long startShiftDate;
+    private List<accountList> account;
+
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @JsonSerialize
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public static class accountList {
+
+        private String name;
+        private String avatar;
+        private String id;
+        private String email;
+
+    }
 
 }

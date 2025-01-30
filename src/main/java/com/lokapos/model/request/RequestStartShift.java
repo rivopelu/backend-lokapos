@@ -1,13 +1,15 @@
-package com.lokapos.model.response;
+package com.lokapos.model.request;
+
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.lokapos.enums.USER_ROLE_ENUM;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -15,15 +17,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @JsonSerialize
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class ResponseListAccount {
-    private String id;
-    private String firstName;
-    private String lastName;
-    private String fullName;
-    private USER_ROLE_ENUM role;
-    private String avatar;
-    private Long createdDate;
-    private String email;
-    private String shiftId;
-    private Boolean isActiveShift;
+public class RequestStartShift {
+    private List<String> accountIds;
 }

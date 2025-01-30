@@ -34,4 +34,13 @@
     <include file="classpath:db/changelog/1.7.5_add_column_business.xml"/>
     <include file="classpath:db/changelog/1.7.6_add_column_type_and_platform_order.xml"/>
     <include file="classpath:db/changelog/1.7.7_change_data_type_code_order.xml"/>
+    <include file="classpath:db/changelog/1.8.0_add_column_merchant_account.xml"/>
+    <include file="classpath:db/changelog/1.8.1_add_column_merchant_in_order.xml"/>
+    <include file="classpath:db/changelog/1.8.2_add_table_shift.xml"/>
+    <include file="classpath:db/changelog/1.8.3_add_table_shift_account.xml"/>
+    <include file="classpath:db/changelog/1.8.4_add_column_active_shift_account.xml"/>
+    <include file="classpath:db/changelog/1.8.5_add_column_shift_in_order.xml"/>
+    <include file="classpath:db/changelog/1.8.6_add_column_business_in_shift.xml"/>
+    <include file="classpath:db/changelog/1.8.7_create_index_for_area.xml"/>
+    <include file="classpath:db/changelog/1.9.0_add_table_notification.xml"/>
 </databaseChangeLog>

@@ -1,23 +1,16 @@
 package com.lokapos.services.impl;
 
-import com.lokapos.entities.Account;
-import com.lokapos.entities.MenuOrder;
-import com.lokapos.entities.ServingOrder;
-import com.lokapos.entities.ServingMenu;
-import com.lokapos.enums.ORDER_PAYMENT_METHOD_ENUM;
-import com.lokapos.enums.ORDER_PAYMENT_STATUS_ENUM;
-import com.lokapos.enums.ORDER_STATUS_ENUM;
-import com.lokapos.enums.RESPONSE_ENUM;
+import com.lokapos.entities.*;
+import com.lokapos.enums.*;
 import com.lokapos.exception.BadRequestException;
+import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateOrder;
 import com.lokapos.model.response.ResponseCheckOrderPaymentStatus;
 import com.lokapos.model.response.ResponseCreateOrder;
 import com.lokapos.model.response.ResponseDetailOrder;
 import com.lokapos.model.response.ResponseListOrder;
-import com.lokapos.repositories.MenuOrderRepository;
-import com.lokapos.repositories.ServingOrderRepository;
-import com.lokapos.repositories.ServingMenuRepository;
+import com.lokapos.repositories.*;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.OrderService;
 import com.lokapos.services.PaymentService;
@@ -51,21 +44,24 @@ public class OrderServiceImpl implements OrderService {
         if (findLatest != null) {
             latestCode = findLatest.getCode();
         }
+
+        ServingOrder servingOrderBuilder = ServingOrder.builder()
+                .status(ORDER_STATUS_ENUM.PENDING)
+                .platform(req.getPlatform())
+                .orderType(req.getType())
+                .code(UtilsHelper.generateOrderCode(latestCode))
+                .paymentStatus(ORDER_PAYMENT_STATUS_ENUM.PENDING)
+                .paymentMethod(req.getPaymentMethod())
+                .build();
+
+        if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.CASH)) {
+            servingOrderBuilder.setPaymentStatus(ORDER_PAYMENT_STATUS_ENUM.SUCCESS);
+        }
+
+        ServingOrder servingOrder = buildMenuOrders(req.getMenuList(), servingOrderBuilder);
+
         try {
-            ServingOrder servingOrderBuilder = ServingOrder.builder()
-                    .status(ORDER_STATUS_ENUM.PENDING)
-                    .platform(req.getPlatform())
-                    .orderType(req.getType())
-                    .code(UtilsHelper.generateOrderCode(latestCode))
-                    .paymentStatus(ORDER_PAYMENT_STATUS_ENUM.PENDING)
-                    .paymentMethod(req.getPaymentMethod())
-                    .build();
 
-            if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.CASH)) {
-                servingOrderBuilder.setPaymentStatus(ORDER_PAYMENT_STATUS_ENUM.SUCCESS);
-            }
-
-            ServingOrder servingOrder = buildMenuOrders(req.getMenuList(), servingOrderBuilder);
             String qrisUrl = null;
             if (req.getPaymentMethod().equals(ORDER_PAYMENT_METHOD_ENUM.QRIS)) {
                 qrisUrl = paymentService.createPaymentUsingEWallet(servingOrder);
@@ -153,6 +149,19 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
+    @Override
+    public String readyOrder(String id) {
+        ServingOrder servingOrder = servingOrderRepository.findById(id).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.ORDER_NOT_FOUND.name()));
+        servingOrder.setStatus(ORDER_STATUS_ENUM.READY);
+        try {
+            servingOrderRepository.save(servingOrder);
+            return RESPONSE_ENUM.SUCCESS.name();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+
     private ServingOrder buildMenuOrders(List<RequestCreateOrder.ListMenu> listMenus, ServingOrder servingOrder) {
         int index = 0;
         BigInteger totalTransaction = BigInteger.ZERO;
@@ -161,11 +170,18 @@ public class OrderServiceImpl implements OrderService {
         if (account.getBusiness() == null) {
             throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
         }
+
+        if(account.getMerchant() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.MERCHANT_NOT_FOUND.name());
+        }
+
+        if(account.getActiveShift() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.NOT_ACTIVE_SHIFT.name());
+        }
         try {
             List<MenuOrder> menuOrders = new ArrayList<>();
             List<ServingMenu> servingMenuList = servingMenuRepository.findAllById(listMenus.stream().map(RequestCreateOrder.ListMenu::getMenuId).toList());
 
-            System.out.println(servingMenuList);
             for (RequestCreateOrder.ListMenu listMenu : listMenus) {
                 ServingMenu servingMenu = servingMenuList.get(index);
                 BigInteger totalPrice = servingMenu.getPrice().multiply(listMenu.getQuantity());
@@ -174,8 +190,10 @@ public class OrderServiceImpl implements OrderService {
                         .servingOrder(servingOrder)
                         .quantity(listMenu.getQuantity())
                         .note(listMenu.getNote())
+                        .merchant(account.getMerchant())
                         .pricePerQty(servingMenu.getPrice())
                         .totalPrice(totalPrice)
+                        .shift(account.getActiveShift())
                         .build();
                 index = index + 1;
                 BigInteger calculateTotal = totalTransaction.add(totalPrice);
@@ -184,7 +202,6 @@ public class OrderServiceImpl implements OrderService {
                 totalItem = calculateTotalItem;
                 menuOrders.add(menuOrder);
                 EntityUtils.created(menuOrder, accountService.getCurrentAccountId());
-
             }
 
 
@@ -192,6 +209,8 @@ public class OrderServiceImpl implements OrderService {
             servingOrder.setTotalTransaction(totalTransaction);
             servingOrder.setTotalItem(totalItem);
             servingOrder.setBusiness(account.getBusiness());
+            servingOrder.setMerchant(account.getMerchant());
+            servingOrder.setShift(account.getActiveShift());
             servingOrder = servingOrderRepository.save(servingOrder);
             menuOrderRepository.saveAll(menuOrders);
             return servingOrder;

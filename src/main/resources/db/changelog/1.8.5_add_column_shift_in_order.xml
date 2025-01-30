@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.8.5" author="rivo pelu">
+        <addColumn tableName="serving_order">
+            <column name="shift_id" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="menu_order">
+            <column name="shift_id" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="serving_order" baseColumnNames="shift_id"
+                                 constraintName="serving_order_shift_fk"
+                                 referencedTableName="shift"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="menu_order" baseColumnNames="shift_id"
+                                 constraintName="menu_order_shift_fk"
+                                 referencedTableName="shift"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

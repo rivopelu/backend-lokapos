@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.8.7" author="rivo pelu">
+        <createIndex tableName="province" indexName="province_index">
+            <column name="id"/>
+        </createIndex>
+        <createIndex tableName="city" indexName="city_index">
+            <column name="id"/>
+        </createIndex>
+        <createIndex tableName="district" indexName="district_index">
+            <column name="id"/>
+        </createIndex>
+        <createIndex tableName="sub_district" indexName="sub_district_index">
+            <column name="id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

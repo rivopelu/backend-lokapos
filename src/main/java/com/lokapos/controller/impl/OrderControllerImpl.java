@@ -35,8 +35,14 @@ public class OrderControllerImpl implements OrderController {
 
     @Override
     public BaseResponse getOrderDetail(String id) {
-
         return ResponseHelper.createBaseResponse(orderService.getOrderDetail(id));
     }
+
+    @Override
+    public BaseResponse readyOrder(String id) {
+        return ResponseHelper.createBaseResponse(orderService.readyOrder(id));
+    }
+
+
 
 }

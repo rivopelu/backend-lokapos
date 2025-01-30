@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.8.1" author="rivo pelu">
+        <addColumn tableName="serving_order">
+            <column name="merchant_id" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="menu_order">
+            <column name="merchant_id" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="serving_order" baseColumnNames="merchant_id"
+                                 constraintName="serving_order_merchant_fk"
+                                 referencedTableName="merchant"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="menu_order" baseColumnNames="merchant_id"
+                                 constraintName="menu_order_merchant_fk"
+                                 referencedTableName="merchant"
+                                 referencedColumnNames="id"/>
+
+    </changeSet>
+</databaseChangeLog>

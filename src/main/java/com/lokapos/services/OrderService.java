@@ -19,4 +19,9 @@ public interface OrderService {
     Page<ResponseListOrder> getListOrder(Pageable pageable);
 
     ResponseDetailOrder getOrderDetail(String id);
+
+    String readyOrder(String id);
+
+    
+
 }

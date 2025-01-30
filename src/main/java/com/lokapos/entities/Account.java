@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -47,6 +48,21 @@ public class Account extends BaseEntity implements UserDetails {
     @ManyToOne
     private Business business;
 
+    @JoinColumn(name = "merchant_id")
+    @ManyToOne
+    private Merchant merchant;
+
+    @JoinColumn(name = "active_shift_id")
+    @ManyToOne
+    private Shift activeShift;
+
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ShiftAccount> shiftAccounts;
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -77,6 +93,5 @@ public class Account extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 
 }

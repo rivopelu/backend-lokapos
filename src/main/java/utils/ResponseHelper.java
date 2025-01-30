@@ -3,7 +3,6 @@ package utils;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.model.response.ResponsePaginatedData;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
