@@ -92,6 +92,7 @@ public class NotificationServiceImpl implements NotificationService {
         com.google.firebase.messaging.Notification notification = com.google.firebase.messaging.Notification.builder()
                 .setTitle(request.getTitle())
                 .setBody(request.getBody())
+                .setImage("https://staging-dashboard.lokapos.web.id/favicon.svg")
                 .build();
         return Message.builder()
                 .setApnsConfig(apnsConfig).setAndroidConfig(androidConfig).setNotification(notification);
