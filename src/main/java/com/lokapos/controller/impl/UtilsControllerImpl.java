@@ -5,6 +5,7 @@ import com.lokapos.controller.UtilsController;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.UtilsService;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.web.multipart.MultipartFile;
 import utils.ResponseHelper;
 
@@ -13,7 +14,7 @@ import utils.ResponseHelper;
 public class UtilsControllerImpl implements UtilsController {
     private final UtilsService utilsService;
     @Override
-    public BaseResponse upload(MultipartFile multipartFile, String folder) {
+    public BaseResponse upload(MultipartFile multipartFile, String folder) throws BadRequestException {
         return ResponseHelper.createBaseResponse(utilsService.uploadFile(multipartFile, folder));
     }
 }

@@ -27,7 +27,10 @@ import java.util.UUID;
 @Service
 public class UtilsServiceImpl implements UtilsService {
     @Override
-    public ResponseUrl uploadFile(MultipartFile multipartFile, String folder) {
+    public ResponseUrl uploadFile(MultipartFile multipartFile, String folder) throws BadRequestException {
+        if (folder == null || folder.isEmpty()) {
+            throw new BadRequestException("Folder required");
+        }
         try {
             String fileName = multipartFile.getOriginalFilename();
             if (fileName != null) {
@@ -42,8 +45,6 @@ public class UtilsServiceImpl implements UtilsService {
             throw new SystemErrorException(e);
         }
     }
-
-
 
 
     private String getExtension(String fileName) {
