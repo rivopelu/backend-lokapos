@@ -6,15 +6,20 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
+import com.lokapos.entities.Notification;
+import com.lokapos.enums.NOTIFICATION_TYPE_ENUM;
+import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.SystemErrorException;
+import com.lokapos.model.request.RequestTestPushNotification;
 import com.lokapos.model.response.ResponseUrl;
+import com.lokapos.services.NotificationService;
 import com.lokapos.services.UtilsService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import utils.EntityUtils;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +31,12 @@ import java.util.UUID;
 
 @Service
 public class UtilsServiceImpl implements UtilsService {
+    private final NotificationService notificationService;
+
+    public UtilsServiceImpl(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
+
     @Override
     public ResponseUrl uploadFile(MultipartFile multipartFile, String folder) throws BadRequestException {
         if (folder == null || folder.isEmpty()) {
@@ -41,6 +52,23 @@ public class UtilsServiceImpl implements UtilsService {
             String URL = this.uploadFile(file, fileName, folder);
             file.delete();
             return ResponseUrl.builder().url(URL).build();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public String testNotification(RequestTestPushNotification req) {
+        Notification notification = Notification.builder()
+                .id(UUID.randomUUID().toString())
+                .token(req.getToken())
+                .type(NOTIFICATION_TYPE_ENUM.TEST)
+                .title(req.getTitle())
+                .body(req.getBody())
+                .build();
+        try {
+            notificationService.pushNotificationSingle(notification);
+            return RESPONSE_ENUM.SUCCESS.name();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
