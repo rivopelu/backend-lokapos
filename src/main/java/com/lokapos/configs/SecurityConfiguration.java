@@ -18,6 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -26,12 +29,18 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    private static final String[] WHITE_LIST_URL = {"/auth/**", "/area/**", "/public/**", "/upload/**", "/webhook/**"};
+    private static final String[] STATIC_WHITE_LIST_URL = {"/auth/**", "/area/**", "/public/**", "/upload/**", "/webhook/**"};
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final PublicApiScanner publicApiScanner;
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
+        Set<String> combinedWhitelist = new HashSet<>(Set.of(STATIC_WHITE_LIST_URL));
+        combinedWhitelist.addAll(publicApiScanner.getPublicUrls());
+
+        String[] finalWhiteList = combinedWhitelist.toArray(new String[0]);
         http
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session
@@ -39,7 +48,7 @@ public class SecurityConfiguration {
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         http.authorizeHttpRequests(req -> req
-                        .requestMatchers(WHITE_LIST_URL)
+                        .requestMatchers(finalWhiteList)
                         .permitAll()
                         .anyRequest()
                         .authenticated())

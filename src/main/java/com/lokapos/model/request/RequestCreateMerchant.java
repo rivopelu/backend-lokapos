@@ -22,6 +22,7 @@ public class RequestCreateMerchant {
     private String address;
     private BigInteger provinceId;
     private BigInteger cityId;
+    private String logo;
     private BigInteger districtId;
     private BigInteger subDistrictId;
 }

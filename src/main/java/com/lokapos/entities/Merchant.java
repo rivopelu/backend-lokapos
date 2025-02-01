@@ -30,6 +30,9 @@ public class Merchant extends BaseEntity {
     @Column(name = "district_id")
     private BigInteger districtId;
 
+    @Column(name = "logo")
+    private String logo;
+
     @Column(name = "sub_district_id")
     private BigInteger subDistrictId;
 

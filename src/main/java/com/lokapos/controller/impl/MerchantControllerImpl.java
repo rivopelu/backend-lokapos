@@ -2,13 +2,11 @@ package com.lokapos.controller.impl;
 
 import com.lokapos.annotations.BaseControllerImpl;
 import com.lokapos.controller.MerchantController;
-import com.lokapos.entities.Merchant;
 import com.lokapos.model.request.RequestCreateMerchant;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.MerchantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import utils.ResponseHelper;
 
 @BaseControllerImpl
@@ -29,5 +27,11 @@ public class MerchantControllerImpl implements MerchantController {
     @Override
     public BaseResponse selectMerchant(String merchantId) {
         return ResponseHelper.createBaseResponse(merchantService.selectMerchant(merchantId));
+    }
+
+    @Override
+    public BaseResponse getTopMerchant() {
+
+        return  ResponseHelper.createBaseResponse(merchantService.getTopMerchant());
     }
 }

@@ -17,4 +17,5 @@ import lombok.NoArgsConstructor;
 public class ResponseListMerchant {
     private String name;
     private String id;
+    private String logo;
 }

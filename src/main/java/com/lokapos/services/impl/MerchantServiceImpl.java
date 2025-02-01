@@ -40,15 +40,7 @@ public class MerchantServiceImpl implements MerchantService {
         }
         Business business = account.getBusiness();
 
-        Merchant merchant = Merchant.builder()
-                .merchantName(req.getName())
-                .address(req.getAddress())
-                .provinceId(req.getProvinceId())
-                .cityId(req.getCityId())
-                .districtId(req.getDistrictId())
-                .subDistrictId(req.getSubDistrictId())
-                .business(business)
-                .build();
+        Merchant merchant = Merchant.builder().merchantName(req.getName()).address(req.getAddress()).provinceId(req.getProvinceId()).cityId(req.getCityId()).districtId(req.getDistrictId()).logo(req.getLogo()).subDistrictId(req.getSubDistrictId()).business(business).build();
         EntityUtils.created(merchant, account.getId());
         try {
             merchantRepository.save(merchant);
@@ -61,18 +53,9 @@ public class MerchantServiceImpl implements MerchantService {
     @Override
     public Page<ResponseListMerchant> getListMerchant(Pageable pageable) {
         String businessId = accountService.getCurrentBusinessIdOrNull();
-
         try {
             Page<Merchant> merchantPage = merchantRepository.findByBusinessIdAndActiveIsTrue(pageable, businessId);
-            List<ResponseListMerchant> responseListMerchants = new ArrayList<>();
-
-            for (Merchant merchant : merchantPage.getContent()) {
-                ResponseListMerchant responseListMerchant = ResponseListMerchant.builder()
-                        .name(merchant.getMerchantName())
-                        .id(merchant.getId())
-                        .build();
-                responseListMerchants.add(responseListMerchant);
-            }
+            List<ResponseListMerchant> responseListMerchants = buildListMerchants(merchantPage.getContent());
             return new PageImpl<>(responseListMerchants, pageable, merchantPage.getTotalElements());
         } catch (Exception e) {
             throw new SystemErrorException(e);
@@ -90,5 +73,24 @@ public class MerchantServiceImpl implements MerchantService {
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    @Override
+    public List<ResponseListMerchant> getTopMerchant() {
+        List<Merchant> merchantList = merchantRepository.getTopMerchant();
+        try {
+            return buildListMerchants(merchantList);
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    private List<ResponseListMerchant> buildListMerchants(List<Merchant> merchantList) {
+        List<ResponseListMerchant> responseListMerchants = new ArrayList<>();
+        for (Merchant merchant : merchantList) {
+            ResponseListMerchant res = ResponseListMerchant.builder().logo(merchant.getLogo()).id(merchant.getId()).name(merchant.getMerchantName()).build();
+            responseListMerchants.add(res);
+        }
+        return responseListMerchants;
     }
 }
