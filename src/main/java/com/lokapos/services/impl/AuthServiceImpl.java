@@ -12,6 +12,7 @@ import com.lokapos.model.request.RequestSignUp;
 import com.lokapos.model.response.ResponseSignIn;
 import com.lokapos.repositories.AccountRepository;
 import com.lokapos.repositories.OtpAndTokenRepository;
+import com.lokapos.services.AccountService;
 import com.lokapos.services.AuthService;
 import com.lokapos.services.EmailService;
 import com.lokapos.services.JwtService;
@@ -26,7 +27,10 @@ import org.springframework.stereotype.Service;
 import utils.EntityUtils;
 import utils.UtilsHelper;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +42,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
     private final JwtService jwtService;
+    private final AccountService accountService;
 
     @Override
     public String ping() {
@@ -97,23 +102,66 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseSignIn posSignIn(RequestSignIn req) {
         Account account = accountRepository.findByEmailAndActiveIsTrue(req.getEmail()).orElseThrow(() -> new BadRequestException(RESPONSE_ENUM.SIGN_IN_FAILED.name()));
+
+
         try {
             return getSignIn(account, req.getPassword());
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
-
     }
 
     @Override
     public ResponseSignIn userSignUp(RequestSignUp req) {
         boolean checkExistingAccount = accountRepository.existsByEmailAndActiveIsTrue(req.getEmail());
+        String encodedPassword = passwordEncoder.encode(req.getPassword());
+
         if (checkExistingAccount) {
             throw new BadRequestException(RESPONSE_ENUM.EMAIL_ALREADY_EXIST.name());
         }
+
+        String emailVerificationToken = UUID.randomUUID().toString();
+
+        List<OtpAndToken> otpAndTokens = new ArrayList<>();
+
+
+        Account account = Account.builder()
+                .email(req.getEmail())
+                .password(encodedPassword)
+                .avatar(UtilsHelper.generateAvatar(req.getFirstName()))
+                .firstName(req.getFirstName())
+                .lastName(req.getLastName())
+                .isVerifiedEmail(false)
+                .role(USER_ROLE_ENUM.USER)
+                .build();
+
+        Long expireTime = UtilsHelper.getExpireOnMinutes(5);
+        EntityUtils.created(account, "SYSTEM");
+        account = accountRepository.save(account);
+
+        OtpAndToken buildOtp = OtpAndToken.builder()
+                .account(account)
+                .type(OTP_AND_TOKEN_TYPE_ENUM.SIGN_UP_OTP)
+                .otp(UtilsHelper.generateNumericOTP())
+                .expireDate(expireTime)
+                .build();
+        OtpAndToken buildEmailVerificationToken = OtpAndToken.builder()
+                .token(emailVerificationToken)
+                .account(account)
+                .type(OTP_AND_TOKEN_TYPE_ENUM.SIGN_UP_OTP)
+                .expireDate(expireTime)
+                .build();
+        EntityUtils.created(buildOtp, account.getId());
+        EntityUtils.created(buildEmailVerificationToken, account.getId());
+        otpAndTokens.add(buildOtp);
+        otpAndTokens.add(buildEmailVerificationToken);
+        otpAndTokenRepository.saveAll(otpAndTokens);
         try {
-            return null;
+            return ResponseSignIn.builder()
+                    .emailVerificationToken(emailVerificationToken)
+                    .build();
         } catch (Exception e) {
+
             throw new SystemErrorException(e);
         }
     }

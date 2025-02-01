@@ -17,5 +17,6 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ResponseSignIn {
 
+    private String emailVerificationToken;
     private String accessToken;
 }

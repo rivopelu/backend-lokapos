@@ -11,11 +11,15 @@ import lombok.RequiredArgsConstructor;
 import utils.ResponseHelper;
 
 @BaseControllerImpl
-@RequiredArgsConstructor
 public class AuthControllerImpl implements AuthController {
 
     private final AuthService authService;
     private final EmailService emailService;
+
+    public AuthControllerImpl(AuthService authService, EmailService emailService) {
+        this.authService = authService;
+        this.emailService = emailService;
+    }
 
     @Override
     public BaseResponse ping() {
@@ -28,8 +32,7 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
-    public BaseResponse useSignUp(RequestSignUp req) {
-
+    public BaseResponse userSignUp(RequestSignUp req) {
         return ResponseHelper.createBaseResponse(authService.userSignUp(req));
     }
 
