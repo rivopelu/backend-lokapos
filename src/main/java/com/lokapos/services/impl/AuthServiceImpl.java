@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 import utils.EntityUtils;
 import utils.UtilsHelper;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.Optional;
 
 @Service
@@ -100,10 +99,23 @@ public class AuthServiceImpl implements AuthService {
         Account account = accountRepository.findByEmailAndActiveIsTrue(req.getEmail()).orElseThrow(() -> new BadRequestException(RESPONSE_ENUM.SIGN_IN_FAILED.name()));
         try {
             return getSignIn(account, req.getPassword());
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new SystemErrorException(e);
         }
 
+    }
+
+    @Override
+    public ResponseSignIn userSignUp(RequestSignUp req) {
+        boolean checkExistingAccount = accountRepository.existsByEmailAndActiveIsTrue(req.getEmail());
+        if (checkExistingAccount) {
+            throw new BadRequestException(RESPONSE_ENUM.EMAIL_ALREADY_EXIST.name());
+        }
+        try {
+            return null;
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
     }
 
     private ResponseSignIn getSignIn(Account account, String password) {

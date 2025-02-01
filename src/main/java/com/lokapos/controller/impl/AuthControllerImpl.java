@@ -28,6 +28,12 @@ public class AuthControllerImpl implements AuthController {
     }
 
     @Override
+    public BaseResponse useSignUp(RequestSignUp req) {
+
+        return ResponseHelper.createBaseResponse(authService.userSignUp(req));
+    }
+
+    @Override
     public BaseResponse testMail() {
         emailService.testingSendMail();
         return ResponseHelper.createBaseResponse("SUCCESS");

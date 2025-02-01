@@ -12,10 +12,13 @@ import utils.ResponseHelper;
 import java.util.List;
 
 @BaseControllerImpl
-@RequiredArgsConstructor
 public class OrderControllerImpl implements OrderController {
 
     private final OrderService orderService;
+
+    public OrderControllerImpl(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @Override
     public BaseResponse createOrder(RequestCreateOrder req) {

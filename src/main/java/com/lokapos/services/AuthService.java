@@ -12,4 +12,6 @@ public interface AuthService {
     ResponseSignIn signIn(RequestSignIn req);
 
     ResponseSignIn posSignIn(RequestSignIn req);
+
+    ResponseSignIn userSignUp(RequestSignUp req);
 }

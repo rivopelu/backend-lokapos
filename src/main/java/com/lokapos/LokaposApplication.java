@@ -31,3 +31,4 @@ public class LokaposApplication {
         return new RestTemplate();
     }
 }
+

@@ -34,7 +34,6 @@ import static utils.UrlString.CHARGE_API_PAYMENT;
 import static utils.UrlString.GET_PAYMENT_SNAP_MID_TRANS_URL;
 
 @Service
-@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
     private final SubscriptionOrderRepository subscriptionOrderRepository;
     private final BusinessRepository businessRepository;
@@ -51,6 +50,15 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Value("${mt.mt-api-url}")
     private String mtApiUrl;
+
+    public PaymentServiceImpl(SubscriptionOrderRepository subscriptionOrderRepository, BusinessRepository businessRepository, TransactionNotificationSubscriptionRepository transactionNotificationSubscriptionRepository, AccountService accountService, PaymentActionRepository paymentActionRepository, ServingOrderRepository servingOrderRepository) {
+        this.subscriptionOrderRepository = subscriptionOrderRepository;
+        this.businessRepository = businessRepository;
+        this.transactionNotificationSubscriptionRepository = transactionNotificationSubscriptionRepository;
+        this.accountService = accountService;
+        this.paymentActionRepository = paymentActionRepository;
+        this.servingOrderRepository = servingOrderRepository;
+    }
 
     @Override
     public SnapPaymentResponse createPayment(ReqPaymentObject req) {
