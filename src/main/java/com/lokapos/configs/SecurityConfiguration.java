@@ -58,7 +58,6 @@ public class SecurityConfiguration {
         http.cors((e) -> e.configurationSource(corsConfigurationSource));
         http.httpBasic(AbstractHttpConfigurer::disable);
 
-
         return http.build();
     }
 }
