@@ -9,6 +9,7 @@ import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestSignIn;
 import com.lokapos.model.request.RequestSignUp;
+import com.lokapos.model.response.ResponseCheckEmailAddress;
 import com.lokapos.model.response.ResponseSignIn;
 import com.lokapos.repositories.AccountRepository;
 import com.lokapos.repositories.OtpAndTokenRepository;
@@ -90,7 +91,6 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public ResponseSignIn signIn(RequestSignIn req) {
         Optional<Account> findAccount = accountRepository.findByEmailAndActiveIsTrue(req.getEmail());
-//        TODO : cant login if role = staff
         if (findAccount.isEmpty()) {
             throw new BadRequestException(RESPONSE_ENUM.SIGN_IN_FAILED.name());
         }
@@ -121,9 +121,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String emailVerificationToken = UUID.randomUUID().toString();
-
         List<OtpAndToken> otpAndTokens = new ArrayList<>();
-
 
         Account account = Account.builder()
                 .email(req.getEmail())
@@ -161,7 +159,18 @@ public class AuthServiceImpl implements AuthService {
                     .emailVerificationToken(emailVerificationToken)
                     .build();
         } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
 
+    @Override
+    public ResponseCheckEmailAddress checkAvailableEmail(String email) {
+        boolean checkExistingAccount = accountRepository.existsByEmailAndActiveIsTrue(email);
+        try {
+            return ResponseCheckEmailAddress.builder()
+                    .isAvailable(!checkExistingAccount)
+                    .build();
+        } catch (Exception e) {
             throw new SystemErrorException(e);
         }
     }

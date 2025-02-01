@@ -7,6 +7,7 @@ import com.lokapos.model.response.BaseResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @BaseController("auth")
 public interface AuthController {
@@ -28,5 +29,8 @@ public interface AuthController {
 
     @PostMapping("v1/pos/sign-in")
     BaseResponse posSignIn(@RequestBody RequestSignIn req);
+
+    @GetMapping("v1/check-available-email")
+    BaseResponse checkAvailableEmail(@RequestParam String email);
 
 }

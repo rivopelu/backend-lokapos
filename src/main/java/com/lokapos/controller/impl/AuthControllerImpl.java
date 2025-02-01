@@ -52,4 +52,9 @@ public class AuthControllerImpl implements AuthController {
 
         return ResponseHelper.createBaseResponse(authService.posSignIn(req));
     }
+
+    @Override
+    public BaseResponse checkAvailableEmail(String email) {
+        return ResponseHelper.createBaseResponse(authService.checkAvailableEmail(email));
+    }
 }
