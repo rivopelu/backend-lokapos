@@ -44,4 +44,5 @@
     <include file="classpath:db/changelog/1.8.7_create_index_for_area.xml"/>
     <include file="classpath:db/changelog/1.9.0_add_table_notification.xml"/>
     <include file="classpath:db/changelog/1.10.0_add_column_merchant_logo.xml"/>
+    <include file="classpath:db/changelog/1.10.1_add_table_wallet.xml"/>
 </databaseChangeLog>

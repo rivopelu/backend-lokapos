@@ -43,4 +43,8 @@ public class Business extends BaseEntity {
     @Column(name = "logo")
     private String logo;
 
+    @JoinColumn(name = "wallet_id")
+    @ManyToOne
+    private Wallet wallet;
+
 }
