@@ -13,4 +13,8 @@ public interface BusinessService {
     ResponseDetailBusiness getAccountBusiness();
 
     String editAccountBusiness(RequestCreateBusiness req);
+
+    String createWallet();
+
+    Long getWalletBalance();
 }

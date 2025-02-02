@@ -3,10 +3,7 @@ package com.lokapos.controller;
 import com.lokapos.annotations.BaseController;
 import com.lokapos.model.request.RequestCreateBusiness;
 import com.lokapos.model.response.BaseResponse;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 @BaseController("business")
 public interface BusinessController {
@@ -19,5 +16,11 @@ public interface BusinessController {
 
     @PutMapping("v1/edit/account-business")
     BaseResponse editAccountBusiness(@RequestBody RequestCreateBusiness req);
+
+    @PatchMapping("v1/create-wallet")
+    BaseResponse createWallet();
+
+    @GetMapping("v1/wallet-balance")
+    BaseResponse getWalletBalance();
 
 }

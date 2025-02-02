@@ -8,6 +8,7 @@ import com.lokapos.model.request.RequestCreateBusiness;
 import com.lokapos.model.response.ResponseDetailBusiness;
 import com.lokapos.repositories.AccountRepository;
 import com.lokapos.repositories.BusinessRepository;
+import com.lokapos.repositories.WalletRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.AreaService;
 import com.lokapos.services.BusinessService;
@@ -23,6 +24,7 @@ public class BusinessServiceImpl implements BusinessService {
     private final BusinessRepository businessRepository;
     private final AccountRepository accountRepository;
     private final AreaService areaService;
+    private final WalletRepository walletRepository;
 
     @Override
     public RESPONSE_ENUM createBusiness(RequestCreateBusiness req) {
@@ -101,6 +103,38 @@ public class BusinessServiceImpl implements BusinessService {
             businessRepository.save(business);
             return RESPONSE_ENUM.SUCCESS.toString();
 
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public String createWallet() {
+        Account account = accountService.getCurrentAccount();
+        Business business = findAccountBusiness(account);
+        if (business.getWallet() != null) {
+            throw new BadRequestException(RESPONSE_ENUM.WALLET_ALREADY_EXIST.name());
+        }
+        Wallet wallet = Wallet.builder().balance(0L).build();
+        EntityUtils.created(wallet, account.getId());
+        try {
+            wallet = walletRepository.save(wallet);
+            business.setWallet(wallet);
+            businessRepository.save(business);
+            return RESPONSE_ENUM.SUCCESS.toString();
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public Long getWalletBalance() {
+        Business business = findAccountBusiness();
+        if (business.getWallet() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.WALLET_NOT_FOUND.name());
+        }
+        try {
+            return business.getWallet().getBalance();
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
