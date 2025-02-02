@@ -46,4 +46,5 @@
     <include file="classpath:db/changelog/1.10.0_add_column_merchant_logo.xml"/>
     <include file="classpath:db/changelog/1.10.1_add_table_wallet.xml"/>
     <include file="classpath:db/changelog/1.10.2_add_table_wallet_transaction.xml"/>
+    <include file="classpath:db/changelog/1.10.3_add_column_wallet_in_business.xml"/>
 </databaseChangeLog>
