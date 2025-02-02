@@ -7,8 +7,7 @@ import com.lokapos.model.request.RequestSignUp;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.AuthService;
 import com.lokapos.services.EmailService;
-import lombok.RequiredArgsConstructor;
-import utils.ResponseHelper;
+import com.lokapos.utils.ResponseHelper;
 
 @BaseControllerImpl
 public class AuthControllerImpl implements AuthController {

@@ -4,7 +4,6 @@ import com.lokapos.entities.Account;
 import com.lokapos.entities.Business;
 import com.lokapos.entities.SubscriptionOrder;
 import com.lokapos.entities.SubscriptionPackage;
-import com.lokapos.enums.PAYMENT_METHOD_TYPE_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.enums.SUBSCRIPTION_ORDER_STATUS_ENUM;
 import com.lokapos.exception.BadRequestException;
@@ -28,8 +27,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import utils.EntityUtils;
-import utils.PaymentRequestUtils;
+import com.lokapos.utils.EntityUtils;
+import com.lokapos.utils.PaymentRequestUtils;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

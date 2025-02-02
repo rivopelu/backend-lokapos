@@ -1,20 +1,32 @@
 package com.lokapos.services.impl;
 
+import com.lokapos.constants.FlagConstants;
 import com.lokapos.entities.*;
 import com.lokapos.enums.RESPONSE_ENUM;
+import com.lokapos.enums.WALLET_TRANSACTION_STATUS_ENUM;
+import com.lokapos.enums.WALLET_TRANSACTION_TYPE_ENUM;
 import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.SystemErrorException;
+import com.lokapos.model.request.ReqPaymentObject;
 import com.lokapos.model.request.RequestCreateBusiness;
+import com.lokapos.model.request.RequestTopUp;
 import com.lokapos.model.response.ResponseDetailBusiness;
 import com.lokapos.repositories.AccountRepository;
 import com.lokapos.repositories.BusinessRepository;
 import com.lokapos.repositories.WalletRepository;
+import com.lokapos.repositories.WalletTransactionRepository;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.AreaService;
 import com.lokapos.services.BusinessService;
+import com.lokapos.services.PaymentService;
+import com.lokapos.utils.UtilsHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import utils.EntityUtils;
+import com.lokapos.utils.EntityUtils;
+import com.lokapos.utils.PaymentRequestUtils;
+
+import java.math.BigInteger;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +37,8 @@ public class BusinessServiceImpl implements BusinessService {
     private final AccountRepository accountRepository;
     private final AreaService areaService;
     private final WalletRepository walletRepository;
+    private final WalletTransactionRepository walletTransactionRepository;
+    private final PaymentService paymentService;
 
     @Override
     public RESPONSE_ENUM createBusiness(RequestCreateBusiness req) {
@@ -140,6 +154,39 @@ public class BusinessServiceImpl implements BusinessService {
         }
     }
 
+    @Override
+    public String topUp(RequestTopUp req) {
+        Account getCurrentAccount = accountService.getCurrentAccount();
+        Business business = findAccountBusiness(getCurrentAccount);
+        Wallet wallet = getBussinessWallet(business);
+
+        String id = UtilsHelper.generateIdFlag(FlagConstants.topUp);
+        WalletTransaction walletTransaction = WalletTransaction.builder()
+                .amount(req.getAmount())
+                .business(business)
+                .wallet(wallet)
+                .type(WALLET_TRANSACTION_TYPE_ENUM.TOP_UP)
+                .status(WALLET_TRANSACTION_STATUS_ENUM.PENDING)
+                .paymentMethod(req.getBankName())
+                .build();
+        walletTransaction.setId(id);
+        EntityUtils.created(walletTransaction, getCurrentAccount.getId());
+
+        try {
+            walletTransactionRepository.save(walletTransaction);
+            return paymentService.createPaymentTopup(buildPaymentObjectTopUp(walletTransaction));
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    private Wallet getBussinessWallet(Business business) {
+        if (business.getWallet() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.WALLET_NOT_FOUND.name());
+        }
+        return business.getWallet();
+    }
+
     private Business findAccountBusiness() {
         Account account = accountService.getCurrentAccount();
         if (account.getBusiness() == null) {
@@ -153,6 +200,26 @@ public class BusinessServiceImpl implements BusinessService {
             throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
         }
         return account.getBusiness();
+    }
+
+
+    private ReqPaymentObject buildPaymentObjectTopUp(WalletTransaction walletTransaction) {
+        ReqPaymentObject.TransactionDetail buildTransactionDetail = ReqPaymentObject.TransactionDetail
+                .builder()
+                .orderId(walletTransaction.getId())
+                .grossAmount(BigInteger.valueOf(walletTransaction.getAmount()))
+                .build();
+
+        String parseBankName = PaymentRequestUtils.parsePaymentMethod(walletTransaction.getPaymentMethod());
+
+        ReqPaymentObject.BankTransfer bankTransfer = ReqPaymentObject.BankTransfer.builder()
+                .bankName(parseBankName)
+                .build();
+
+        return ReqPaymentObject.builder()
+                .transactionDetail(buildTransactionDetail)
+                .bankTransfer(bankTransfer)
+                .build();
     }
 
 }

@@ -2,6 +2,7 @@ package com.lokapos.controller;
 
 import com.lokapos.annotations.BaseController;
 import com.lokapos.model.request.RequestCreateBusiness;
+import com.lokapos.model.request.RequestTopUp;
 import com.lokapos.model.response.BaseResponse;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,8 @@ public interface BusinessController {
     @GetMapping("v1/wallet-balance")
     BaseResponse getWalletBalance();
 
+    @PostMapping("v1/top-up")
+    BaseResponse topUp(@RequestBody RequestTopUp req);
 
 
 }

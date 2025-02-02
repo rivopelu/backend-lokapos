@@ -48,4 +48,7 @@
     <include file="classpath:db/changelog/1.10.2_add_table_wallet_transaction.xml"/>
     <include file="classpath:db/changelog/1.10.3_add_column_wallet_in_business.xml"/>
     <include file="classpath:db/changelog/1.10.4_add_column_status_in_wallet.xml"/>
+    <include file="classpath:db/changelog/1.10.5_add_column_amount_wallet_transaction.xml"/>
+    <include file="classpath:db/changelog/1.10.6_add_column_payment_method_wallet_transaction.xml"/>
+    <include file="classpath:db/changelog/1.10.7_add_column_type_wallet_transaction.xml"/>
 </databaseChangeLog>

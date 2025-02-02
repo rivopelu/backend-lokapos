@@ -1,6 +1,7 @@
-package utils;
+package com.lokapos.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lokapos.model.response.ResponseParseFlagId;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
@@ -8,7 +9,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 public class UtilsHelper {
     private static LocalDate lastResetDate = getCurrentDateInJakarta();
@@ -16,6 +19,7 @@ public class UtilsHelper {
     private static LocalDate getCurrentDateInJakarta() {
         return ZonedDateTime.now(ZoneId.of("Asia/Jakarta")).toLocalDate();
     }
+
     public static BigInteger generateOrderCode(BigInteger latestCode) {
         if (!getCurrentDateInJakarta().isEqual(lastResetDate)) {
             lastResetDate = getCurrentDateInJakarta();
@@ -28,6 +32,7 @@ public class UtilsHelper {
 
         return latestCode.add(BigInteger.ONE);
     }
+
     public static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
@@ -70,5 +75,21 @@ public class UtilsHelper {
 
     public static String generateAvatar(String name) {
         return "https://ui-avatars.com/api/?name=" + name;
+    }
+
+    public static String generateIdFlag(String flag) {
+        return flag + "_" + UUID.randomUUID();
+    }
+
+    public static String generateIdFlag(String flag, String id) {
+        return flag + "_" + id;
+    }
+
+    public static ResponseParseFlagId parseIdFromFlg(String id) {
+        String[] split = id.split("_");
+        return ResponseParseFlagId.builder()
+                .flag(split[0])
+                .id(split[1])
+                .build();
     }
 }

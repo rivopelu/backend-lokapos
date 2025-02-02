@@ -6,7 +6,7 @@ import com.lokapos.controller.AreaController;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.AreaService;
 import lombok.RequiredArgsConstructor;
-import utils.ResponseHelper;
+import com.lokapos.utils.ResponseHelper;
 
 import java.math.BigInteger;
 

@@ -6,7 +6,7 @@ import com.lokapos.model.request.ReqNotificationMidTrans;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.PaymentService;
 import lombok.RequiredArgsConstructor;
-import utils.ResponseHelper;
+import com.lokapos.utils.ResponseHelper;
 
 @BaseControllerImpl
 @RequiredArgsConstructor

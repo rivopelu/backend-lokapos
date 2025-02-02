@@ -1,4 +1,4 @@
-package utils;
+package com.lokapos.utils;
 
 
 import com.lokapos.entities.BaseEntity;

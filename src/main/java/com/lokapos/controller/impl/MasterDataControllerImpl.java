@@ -7,7 +7,7 @@ import com.lokapos.model.request.RequestCreateEditMenu;
 import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.MasterDataService;
 import lombok.RequiredArgsConstructor;
-import utils.ResponseHelper;
+import com.lokapos.utils.ResponseHelper;
 
 import java.util.List;
 

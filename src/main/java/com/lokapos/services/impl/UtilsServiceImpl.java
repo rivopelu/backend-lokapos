@@ -17,7 +17,6 @@ import com.lokapos.services.UtilsService;
 import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import utils.EntityUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

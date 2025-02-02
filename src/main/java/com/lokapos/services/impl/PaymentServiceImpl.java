@@ -1,21 +1,21 @@
 package com.lokapos.services.impl;
 
+import com.lokapos.constants.FlagConstants;
 import com.lokapos.entities.*;
 import com.lokapos.enums.ORDER_PAYMENT_STATUS_ENUM;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.enums.SUBSCRIPTION_ORDER_STATUS_ENUM;
+import com.lokapos.enums.WALLET_TRANSACTION_STATUS_ENUM;
 import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.NotFoundException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.ReqNotificationMidTrans;
 import com.lokapos.model.request.ReqPaymentObject;
-import com.lokapos.model.response.ResponseCheckStatusGopayMidTrans;
-import com.lokapos.model.response.ResponseCreateTransactionQris;
-import com.lokapos.model.response.ResponseTransferPaymentMethodFromMidTrans;
-import com.lokapos.model.response.SnapPaymentResponse;
+import com.lokapos.model.response.*;
 import com.lokapos.repositories.*;
 import com.lokapos.services.AccountService;
 import com.lokapos.services.PaymentService;
+import com.lokapos.utils.UtilsHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -24,16 +24,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import utils.EntityUtils;
+import com.lokapos.utils.EntityUtils;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import static utils.UrlString.CHARGE_API_PAYMENT;
-import static utils.UrlString.GET_PAYMENT_SNAP_MID_TRANS_URL;
+import static com.lokapos.utils.UrlString.CHARGE_API_PAYMENT;
+import static com.lokapos.utils.UrlString.GET_PAYMENT_SNAP_MID_TRANS_URL;
 
 @Service
+@RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
     private final SubscriptionOrderRepository subscriptionOrderRepository;
     private final BusinessRepository businessRepository;
@@ -41,6 +42,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final AccountService accountService;
     private final PaymentActionRepository paymentActionRepository;
     private final ServingOrderRepository servingOrderRepository;
+    private final WalletTransactionRepository walletTransactionRepository;
+    private final WalletRepository walletRepository;
 
     @Value("${mt.server-key}")
     private String mtServerKey;
@@ -51,14 +54,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${mt.mt-api-url}")
     private String mtApiUrl;
 
-    public PaymentServiceImpl(SubscriptionOrderRepository subscriptionOrderRepository, BusinessRepository businessRepository, TransactionNotificationSubscriptionRepository transactionNotificationSubscriptionRepository, AccountService accountService, PaymentActionRepository paymentActionRepository, ServingOrderRepository servingOrderRepository) {
-        this.subscriptionOrderRepository = subscriptionOrderRepository;
-        this.businessRepository = businessRepository;
-        this.transactionNotificationSubscriptionRepository = transactionNotificationSubscriptionRepository;
-        this.accountService = accountService;
-        this.paymentActionRepository = paymentActionRepository;
-        this.servingOrderRepository = servingOrderRepository;
-    }
 
     @Override
     public SnapPaymentResponse createPayment(ReqPaymentObject req) {
@@ -87,11 +82,22 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public String postNotificationFromMidTrans(ReqNotificationMidTrans req) {
+
+        ResponseParseFlagId parseFlagId = UtilsHelper.parseIdFromFlg(req.getOrderId());
+        if (parseFlagId.getFlag() != null) {
+            if (Objects.equals(parseFlagId.getFlag(), FlagConstants.topUp)) {
+                return receiveNotificationTopup(parseFlagId.getId(), req);
+            }
+
+        }
+
         Optional<SubscriptionOrder> findOrder = subscriptionOrderRepository.findById(req.getOrderId());
         if (findOrder.isEmpty()) {
             throw new BadRequestException("Order not found");
         }
-        SubscriptionOrder subscriptionOrder = null;
+
+
+        SubscriptionOrder subscriptionOrder;
 
         subscriptionOrder = findOrder.get();
 
@@ -164,6 +170,30 @@ public class PaymentServiceImpl implements PaymentService {
         return subscriptionOrder.getId();
     }
 
+    public String createPaymentTopup(ReqPaymentObject req) {
+        String url = mtApiUrl + CHARGE_API_PAYMENT;
+
+        HttpHeaders headers = generateHeaderMidTrans();
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("transaction_details", generateTransactionDetail(req.getTransactionDetail()));
+        if (req.getItemsDetail() != null) {
+            body.put("item_detail", generateItemsDetail(req.getItemsDetail()));
+
+        }
+        if (req.getBankTransfer() != null) {
+            body.put("bank_transfer", generateBankTransfer(req.getBankTransfer()));
+            body.put("payment_type", "bank_transfer");
+        }
+
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(body, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<ResponseTransferPaymentMethodFromMidTrans> response = restTemplate.exchange(url, HttpMethod.POST, requestEntity, ResponseTransferPaymentMethodFromMidTrans.class);
+
+        return Objects.requireNonNull(response.getBody()).getVa_numbers().getFirst().va_number;
+    }
+
     @Override
     public String createPaymentUsingEWallet(ServingOrder order) {
         try {
@@ -202,7 +232,7 @@ public class PaymentServiceImpl implements PaymentService {
                 paymentActions.add(paymentAction);
             }
             paymentActionRepository.saveAll(paymentActions);
-            PaymentAction paymentAction = paymentActions.get(0);
+            PaymentAction paymentAction = paymentActions.getFirst();
             return paymentAction.getUrl();
         } catch (Exception e) {
             throw new SystemErrorException(e);
@@ -274,13 +304,6 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
 
-    private Map<String, Object> generateCustomersDetail(ReqPaymentObject.CustomersDetails detail) {
-        Map<String, Object> customerDetails = new HashMap<>();
-        customerDetails.put("first_name", detail.getFirstName());
-        customerDetails.put("email", detail.getEmail());
-        return customerDetails;
-    }
-
     private HttpHeaders generateHeaderMidTrans() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Content-Type", "application/json");
@@ -288,5 +311,14 @@ public class PaymentServiceImpl implements PaymentService {
         String encodedAuthString = Base64.getEncoder().encodeToString(authString.getBytes());
         headers.set("Authorization", "Basic " + encodedAuthString);
         return headers;
+    }
+
+    private String receiveNotificationTopup(String orderId, ReqNotificationMidTrans req) {
+        WalletTransaction walletTransaction = walletTransactionRepository.findById(req.getOrderId()).orElseThrow(() -> new NotFoundException(RESPONSE_ENUM.ORDER_NOT_FOUND.name()));
+        walletTransaction.setStatus(WALLET_TRANSACTION_STATUS_ENUM.SUCCESS);
+        Wallet wallet = walletTransaction.getWallet();
+        wallet.setBalance(wallet.getBalance() + walletTransaction.getAmount());
+        walletRepository.save(wallet);
+        return orderId;
     }
 }

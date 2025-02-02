@@ -9,7 +9,7 @@ import com.lokapos.model.response.BaseResponse;
 import com.lokapos.services.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import utils.ResponseHelper;
+import com.lokapos.utils.ResponseHelper;
 
 @RequiredArgsConstructor
 @BaseControllerImpl

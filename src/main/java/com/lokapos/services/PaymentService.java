@@ -15,6 +15,8 @@ public interface PaymentService {
 
     String createPaymentCustomInterface(ReqPaymentObject reqPaymentObject);
 
+    String createPaymentTopup(ReqPaymentObject reqPaymentObject);
+
     String createPaymentUsingEWallet(ServingOrder order);
 
     ORDER_PAYMENT_STATUS_ENUM checkStatusOrder(String orderId);

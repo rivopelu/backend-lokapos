@@ -18,7 +18,7 @@ import com.lokapos.services.AccountService;
 import com.lokapos.services.MasterDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import utils.EntityUtils;
+import com.lokapos.utils.EntityUtils;
 
 import java.util.ArrayList;
 import java.util.List;

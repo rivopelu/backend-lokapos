@@ -1,15 +1,50 @@
-package utils;
+package com.lokapos.utils;
 
 import com.lokapos.entities.Account;
 import com.lokapos.entities.Business;
 import com.lokapos.entities.SubscriptionOrder;
 import com.lokapos.entities.SubscriptionPackage;
 import com.lokapos.enums.PAYMENT_METHOD_TYPE_ENUM;
+import com.lokapos.exception.BadRequestException;
 import com.lokapos.model.request.ReqPaymentObject;
 
 import java.math.BigInteger;
 
 public class PaymentRequestUtils {
+
+    public static PAYMENT_METHOD_TYPE_ENUM parsePaymentMethod(String paymentMethodString) {
+        switch (paymentMethodString) {
+
+            case "bca" -> {
+                return PAYMENT_METHOD_TYPE_ENUM.BANK_TRANSFER_BCA;
+            }
+            case "bri" -> {
+                return PAYMENT_METHOD_TYPE_ENUM.BANK_TRANSFER_BRI;
+            }
+            case "bni" -> {
+                return PAYMENT_METHOD_TYPE_ENUM.BANK_TRANSFER_BNI;
+            }
+
+            default -> throw new BadRequestException("Invalid payment method");
+        }
+    }
+
+
+    public static String parsePaymentMethod(PAYMENT_METHOD_TYPE_ENUM paymentMethodString) {
+        switch (paymentMethodString) {
+
+            case BANK_TRANSFER_BCA -> {
+                return "bca";
+            }
+            case BANK_TRANSFER_BRI -> {
+                return "bri";
+            }
+            case BANK_TRANSFER_BNI -> {
+                return "bni";
+            }
+            default -> throw new BadRequestException("Invalid payment method");
+        }
+    }
 
     public static ReqPaymentObject parseRequestPayment(SubscriptionOrder order, Account account, SubscriptionPackage subscriptionPackage, Business business) {
         switch (order.getPaymentMethod()) {

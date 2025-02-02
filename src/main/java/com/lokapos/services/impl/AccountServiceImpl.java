@@ -25,8 +25,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import utils.EntityUtils;
-import utils.UtilsHelper;
+import com.lokapos.utils.EntityUtils;
+import com.lokapos.utils.UtilsHelper;
 
 import java.util.ArrayList;
 import java.util.List;

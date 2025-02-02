@@ -8,7 +8,7 @@ import com.lokapos.services.UtilsService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.web.multipart.MultipartFile;
-import utils.ResponseHelper;
+import com.lokapos.utils.ResponseHelper;
 
 @RequiredArgsConstructor
 @BaseControllerImpl

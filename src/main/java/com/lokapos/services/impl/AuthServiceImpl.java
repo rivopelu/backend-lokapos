@@ -25,8 +25,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import utils.EntityUtils;
-import utils.UtilsHelper;
+import com.lokapos.utils.EntityUtils;
+import com.lokapos.utils.UtilsHelper;
 
 import java.util.ArrayList;
 import java.util.List;
