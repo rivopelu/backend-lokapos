@@ -1,14 +1,15 @@
 package com.lokapos.services.impl;
 
-import com.lokapos.entities.Account;
-import com.lokapos.entities.Business;
+import com.lokapos.entities.*;
 import com.lokapos.enums.RESPONSE_ENUM;
 import com.lokapos.exception.BadRequestException;
 import com.lokapos.exception.SystemErrorException;
 import com.lokapos.model.request.RequestCreateBusiness;
+import com.lokapos.model.response.ResponseDetailBusiness;
 import com.lokapos.repositories.AccountRepository;
 import com.lokapos.repositories.BusinessRepository;
 import com.lokapos.services.AccountService;
+import com.lokapos.services.AreaService;
 import com.lokapos.services.BusinessService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class BusinessServiceImpl implements BusinessService {
     private final AccountService accountService;
     private final BusinessRepository businessRepository;
     private final AccountRepository accountRepository;
+    private final AreaService areaService;
 
     @Override
     public RESPONSE_ENUM createBusiness(RequestCreateBusiness req) {
@@ -43,7 +45,6 @@ public class BusinessServiceImpl implements BusinessService {
                 .build();
         EntityUtils.created(business, account.getId());
         try {
-
             business = businessRepository.save(business);
             account.setBusiness(business);
             accountRepository.save(account);
@@ -51,6 +52,73 @@ public class BusinessServiceImpl implements BusinessService {
         } catch (Exception e) {
             throw new SystemErrorException(e);
         }
+    }
+
+    @Override
+    public ResponseDetailBusiness getAccountBusiness() {
+        Business business = findAccountBusiness();
+
+        Province province = areaService.getProvinceById(business.getProvinceId());
+        City city = areaService.getCityById(business.getCityId());
+        District district = areaService.getDistrictById(business.getDistrictId());
+        SubDistrict subDistrict = areaService.getSubDistrictById(business.getSubDistrictId());
+        try {
+            return ResponseDetailBusiness.builder()
+                    .id(business.getId())
+                    .logo(business.getLogo())
+                    .name(business.getBusinessName())
+                    .address(business.getAddress())
+                    .provinceId(province.getId())
+                    .provinceName(province.getName())
+                    .cityId(city.getId())
+                    .cityName(city.getName())
+                    .districtId(district.getId())
+                    .districtName(district.getName())
+                    .subDistrictId(subDistrict.getId())
+                    .subDistrictName(subDistrict.getName())
+                    .build();
+
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    @Override
+    public String editAccountBusiness(RequestCreateBusiness req) {
+        Account getCurrentAccount = accountService.getCurrentAccount();
+        Business business = findAccountBusiness(getCurrentAccount);
+        business.setBusinessName(req.getName());
+        business.setAddress(req.getAddress());
+        business.setProvinceId(req.getProvinceId());
+        business.setCityId(req.getCityId());
+        business.setDistrictId(req.getDistrictId());
+        business.setSubDistrictId(req.getSubDistrictId());
+        business.setLogo(req.getLogo());
+
+        try {
+
+            EntityUtils.updated(business, getCurrentAccount.getId());
+            businessRepository.save(business);
+            return RESPONSE_ENUM.SUCCESS.toString();
+
+        } catch (Exception e) {
+            throw new SystemErrorException(e);
+        }
+    }
+
+    private Business findAccountBusiness() {
+        Account account = accountService.getCurrentAccount();
+        if (account.getBusiness() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
+        }
+        return account.getBusiness();
+    }
+
+    private Business findAccountBusiness(Account account) {
+        if (account.getBusiness() == null) {
+            throw new BadRequestException(RESPONSE_ENUM.ACCOUNT_DONT_HAVE_BUSINESS.name());
+        }
+        return account.getBusiness();
     }
 
 }

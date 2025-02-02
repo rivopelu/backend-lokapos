@@ -19,4 +19,16 @@ public class BusinessControllerImpl implements BusinessController {
         return ResponseHelper.createBaseResponse(businessService.createBusiness(req));
     }
 
+    @Override
+    public BaseResponse getAccountBusiness() {
+
+        return ResponseHelper.createBaseResponse(businessService.getAccountBusiness());
+    }
+
+    @Override
+    public BaseResponse editAccountBusiness(RequestCreateBusiness req) {
+        return ResponseHelper.createBaseResponse(businessService.editAccountBusiness(req));
+    }
+
+
 }
