@@ -18,6 +18,10 @@ public class WalletTransaction extends BaseEntity {
     @ManyToOne
     private Wallet wallet;
 
+    @JoinColumn(name = "business_id")
+    @ManyToOne
+    private Business business;
+
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private WALLET_TRANSACTION_TYPE_ENUM type;

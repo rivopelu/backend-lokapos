@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1.10.2" author="rivo pelu">
+        <createTable tableName="wallet_transaction">
+            <!--            BASE ENTITY START-->
+            <column name="id" type="varchar(255)">
+                <constraints nullable="false" primaryKey="true" unique="true"/>
+            </column>
+            <column name="active" type="int(1)" defaultValue="1">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(255)" defaultValue="SYSTEM">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="long">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="deleted_date" type="long">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_by" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="updated_date" type="long">
+                <constraints nullable="true"/>
+            </column>
+            <!--            BASE ENTITY END-->
+            <column name="wallet_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="business_id" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="wallet_transaction"
+                baseColumnNames="business_id"
+                constraintName="business_wallet_transaction_fk"
+                referencedTableName="business"
+                referencedColumnNames="id"
+        />
+        <addForeignKeyConstraint
+                baseTableName="wallet_transaction"
+                baseColumnNames="wallet_id"
+                constraintName="wallet_and_transaction_fk"
+                referencedTableName="wallet"
+                referencedColumnNames="id"
+        />
+    </changeSet>
+</databaseChangeLog>
